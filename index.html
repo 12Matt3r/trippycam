@@ -178,11 +178,9 @@
                         <option value="mirror">Horizontal Mirror</option>
                         <option value="wavewarp">Wave Warp</option>
                         <option value="kaleidoscope">Kaleidoscope</option>
-                        <option value="fisheye">Fisheye Distortion</option>
                         <option value="noiseGlitch">Noise Glitch</option>
-                        <option value="displacementMap">Feedback Displace</option>
-                        <option value="refraction">Refraction (Ripples)</option>
-                        <option value="kaleidoscope">Kaleidoscope</option>
+                        <option value="fisheye">Fisheye Distortion</option>
+                        <option value="feedbackDisplace">Feedback Displace</option>
                     </select>
                 </div>
                 
@@ -191,7 +189,7 @@
                 <div class="control-group" data-control-key="feedback"> <label for="feedbackRange">Feedback:</label> <input type="range" id="feedbackRange" min="0.0" max="0.95" step="0.01" value="0.2"> <input type="number" id="feedbackNumber" step="0.01" value="0.2"> </div>
                 <div class="control-group" data-control-key="threshold"> <label for="thresholdRange">Threshold:</label> <input type="range" id="thresholdRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="thresholdNumber" step="0.01" value="0.5"> </div>
 
-                <div class="section-title" style="margin-top: 15px;">CRT Effect Controls:</div>
+                <!-- CRT Controls -->
                 <div class="control-group" data-control-key="scanlineIntensity">
                     <label for="scanlineIntensityRange">Scanline Str:</label>
                     <input type="range" id="scanlineIntensityRange" min="0.0" max="1.0" step="0.01" value="0.3">
@@ -223,7 +221,7 @@
                     <input type="number" id="vignetteSoftnessNumber" step="0.01" value="0.5">
                 </div>
 
-                <div class="section-title" style="margin-top: 15px;">Wave Warp Controls:</div>
+                <!-- Wave Warp Controls -->
                 <div class="control-group" data-control-key="waveDensity">
                     <label for="waveDensityRange">Wave Density:</label>
                     <input type="range" id="waveDensityRange" min="5.0" max="100.0" step="1" value="20.0">
@@ -235,95 +233,38 @@
                     <input type="number" id="waveSpeedNumber" step="0.1" value="1.0">
                 </div>
                 <div class="control-group" data-control-key="waveAmplitude">
-                    <label for="waveAmplitudeRange">Wave Amp:</label>
+                    <label for="waveAmplitudeRange">Wave Amplitude:</label>
                     <input type="range" id="waveAmplitudeRange" min="0.0" max="0.15" step="0.001" value="0.02">
                     <input type="number" id="waveAmplitudeNumber" step="0.001" value="0.02">
                 </div>
 
-                <div class="section-title" style="margin-top: 15px;">Kaleidoscope Controls:</div>
+                <!-- Kaleidoscope Controls -->
                 <div class="control-group" data-control-key="kaleidoSegments">
-                    <label for="kaleidoSegmentsRange">Segments:</label>
+                    <label for="kaleidoSegmentsRange">Kaleido Segs:</label>
                     <input type="range" id="kaleidoSegmentsRange" min="2" max="20" step="1" value="6">
                     <input type="number" id="kaleidoSegmentsNumber" min="2" max="20" step="1" value="6">
                 </div>
 
-                <div class="section-title" style="margin-top: 15px;">Fisheye Controls:</div>
+                <!-- Fisheye Controls -->
                 <div class="control-group" data-control-key="fisheyeStrength">
                     <label for="fisheyeStrengthRange">Fisheye Str:</label>
                     <input type="range" id="fisheyeStrengthRange" min="0.0" max="1.5" step="0.01" value="0.3">
                     <input type="number" id="fisheyeStrengthNumber" step="0.01" value="0.3">
                 </div>
 
-                <div class="section-title" style="margin-top: 15px;">Noise Glitch Controls:</div>
+                <!-- Noise Glitch Controls -->
                 <div class="control-group" data-control-key="glitchStrength">
                     <label for="glitchStrengthRange">Glitch Strength:</label>
                     <input type="range" id="glitchStrengthRange" min="0.0" max="1.0" step="0.01" value="0.1">
                     <input type="number" id="glitchStrengthNumber" step="0.01" value="0.1">
                 </div>
 
-                <div class="section-title" style="margin-top: 15px;">Kaleidoscope Controls:</div>
-                <div class="control-group" data-control-key="kaleidoSegments">
-                    <label for="kaleidoSegmentsRange">Segments:</label>
-                    <input type="range" id="kaleidoSegmentsRange" min="2" max="20" step="1" value="6">
-                    <input type="number" id="kaleidoSegmentsNumber" min="2" max="20" step="1" value="6">
+                <!-- Fisheye Controls -->
+                <div class="control-group" data-control-key="fisheyeStrength">
+                    <label for="fisheyeStrengthRange">Fisheye Str:</label>
+                    <input type="range" id="fisheyeStrengthRange" min="0.0" max="1.5" step="0.01" value="0.3">
+                    <input type="number" id="fisheyeStrengthNumber" step="0.01" value="0.3">
                 </div>
-
-                <div class="control-group" data-control-key="displacementMapStrength">
-                    <label for="displacementMapStrengthRange">Displace Strength:</label>
-                    <input type="range" id="displacementMapStrengthRange" min="0.0" max="0.2" step="0.001" value="0.05">
-                    <input type="number" id="displacementMapStrengthNumber" step="0.001" value="0.05">
-                </div>
-    <div class="control-group" data-control-key="refractionStrength">
-        <label for="refractionStrengthRange">Refract Strength:</label>
-        <input type="range" id="refractionStrengthRange" min="0.0" max="0.1" step="0.001" value="0.02">
-        <input type="number" id="refractionStrengthNumber" step="0.001" value="0.02">
-    </div>
-    <div class="control-group" data-control-key="rippleFrequency">
-        <label for="rippleFrequencyRange">Ripple Freq:</label>
-        <input type="range" id="rippleFrequencyRange" min="1.0" max="100.0" step="1" value="20.0">
-        <input type="number" id="rippleFrequencyNumber" step="1" value="20.0">
-    </div>
-    <div class="control-group" data-control-key="rippleSpeed">
-        <label for="rippleSpeedRange">Ripple Speed:</label>
-        <input type="range" id="rippleSpeedRange" min="0.0" max="3.0" step="0.05" value="0.5">
-        <input type="number" id="rippleSpeedNumber" step="0.05" value="0.5">
-    </div>
-    <div class="control-group" data-control-key="slitScanSpeed">
-        <label for="slitScanSpeedRange">Scan Speed:</label>
-        <input type="range" id="slitScanSpeedRange" min="0.0001" max="0.05" step="0.0001" value="0.005">
-        <input type="number" id="slitScanSpeedNumber" step="0.0001" value="0.005">
-    </div>
-    <div class="control-group" data-control-key="sliceThickness">
-        <label for="sliceThicknessRange">Slice Thickness:</label>
-        <input type="range" id="sliceThicknessRange" min="0.001" max="0.1" step="0.001" value="0.01">
-        <input type="number" id="sliceThicknessNumber" step="0.001" value="0.01">
-    </div>
-    <div class="control-group" data-control-key="sliceSamplePosition">
-        <label for="sliceSamplePositionRange">Slice Source Pos:</label>
-        <input type="range" id="sliceSamplePositionRange" min="0.0" max="1.0" step="0.01" value="0.5">
-        <input type="number" id="sliceSamplePositionNumber" step="0.01" value="0.5">
-    </div>
-    <div class="control-group" data-control-key="scanDirection"> <!-- data-control-key for show/hide -->
-        <label for="scanDirectionSelect">Scan Direction:</label>
-        <select id="scanDirectionSelect" style="flex-grow: 1; background-color: rgba(20, 22, 30, 0.8); color: #e8e8e8; border: 1px solid rgba(80, 90, 120, 0.9); border-radius: 4px; padding: 5px; font-size: 12px;">
-            <option value="0">Horizontal Scan (Vertical Slit)</option>
-            <option value="1">Vertical Scan (Horizontal Slit)</option>
-        </select>
-    </div>
-    <div class="control-group" data-control-key="slitScanReset"> <!-- data-control-key for show/hide -->
-        <label for="resetSlitScanButton" style="flex-basis: auto; margin-right: 10px;">Reset Scan:</label>
-        <button id="resetSlitScanButton" class="main-action-button" style="flex-grow: 1;">Clear Accumulation</button>
-    </div>
-    <div class="control-group" data-control-key="meltStrength">
-        <label for="meltStrengthRange">Melt Strength:</label>
-        <input type="range" id="meltStrengthRange" min="0.0" max="0.5" step="0.005" value="0.1">
-        <input type="number" id="meltStrengthNumber" step="0.005" value="0.1">
-    </div>
-    <div class="control-group" data-control-key="meltSpread">
-        <label for="meltSpreadRange">Melt Spread:</label>
-        <input type="range" id="meltSpreadRange" min="0.01" max="0.3" step="0.005" value="0.05">
-        <input type="number" id="meltSpreadNumber" step="0.005" value="0.05">
-    </div>
             </div>
             
             <div id="advanced-tab" class="tab-content">
@@ -335,10 +276,6 @@
                 <div class="control-group" style="margin-top: 15px;">
                     <label for="audioReactiveCheckbox" style="flex-basis: auto; margin-right: 10px;">Enable Audio Reactivity (Mic):</label>
                     <input type="checkbox" id="audioReactiveCheckbox" style="width: 20px; height: 20px; flex-shrink: 0;">
-                </div>
-                <div class="control-group" style="margin-top: 15px;">
-                    <label for="faceTrackingCheckbox" style="flex-basis: auto; margin-right: 10px;">Enable Face Tracking (for Face Melt):</label>
-                    <input type="checkbox" id="faceTrackingCheckbox" style="width: 20px; height: 20px; flex-shrink: 0;">
                 </div>
             </div>
         </div>
@@ -678,28 +615,23 @@
                 gl_FragColor = finalColor;
             }`;
 
-        /* @tweakable CRT retro screen effect */
         const crtShader = `
             precision highp float;
             varying vec2 v_texCoord;
-
             uniform sampler2D u_webcamTexture;
             uniform float u_time;
-
-            // CRT Effect Uniforms
-            uniform float u_scanlineIntensity; // How visible the scanlines are (0.0 to 1.0)
-            uniform float u_scanlineDensity;   // How many scanlines (e.g., canvas.height * 0.8)
-            uniform float u_curvatureAmount;   // How much barrel distortion (0.0 to 0.2 is usually good)
-            uniform float u_phosphorOffset;    // Chromatic aberration offset (e.g., 0.001 to 0.005)
-            uniform float u_vignetteStrength;  // Vignette darkness at edges (0.0 to 1.0)
-            uniform float u_vignetteSoftness;  // How gradual the vignette is (0.0 to 1.0)
-
-            // Standard Adjustment Uniforms
             uniform float u_brightness;
             uniform float u_contrast;
             uniform float u_saturation;
+            uniform float u_intensity;
 
-            // Copied helper functions
+            uniform float u_scanlineIntensity;
+            uniform float u_scanlineDensity;
+            uniform float u_curvatureAmount;
+            uniform float u_phosphorOffset;
+            uniform float u_vignetteStrength;
+            uniform float u_vignetteSoftness;
+
             vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
                 vec3 result = color + brightness;
                 result = (result - 0.5) * contrast + 0.5;
@@ -712,315 +644,35 @@
             }
 
             void main() {
-                vec2 mirroredTexCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y);
-                vec2 centeredOriginalTexCoord = mirroredTexCoord - 0.5; // For vignette
+                vec2 uv = v_texCoord;
+                uv.x = 1.0 - uv.x; // Mirror webcam input
 
                 // Screen Curvature (Barrel Distortion)
-                vec2 centeredDistortCoord = mirroredTexCoord - 0.5;
-                float distSq = dot(centeredDistortCoord, centeredDistortCoord);
-                vec2 distortedCoord = centeredDistortCoord * (1.0 + u_curvatureAmount * distSq);
-                distortedCoord += 0.5; // Convert back to 0-1 range for texture sampling
+                vec2 centeredUV = uv * 2.0 - 1.0;
+                float r_sq = dot(centeredUV, centeredUV);
+                vec2 distortedUV = centeredUV * (1.0 - u_curvatureAmount * r_sq);
+                distortedUV = (distortedUV + 1.0) * 0.5;
 
-                vec3 finalColor;
+                vec4 finalColor = vec4(0.0, 0.0, 0.0, 1.0);
 
-                // Handle pixels outside the curved screen area
-                if (distortedCoord.x < 0.0 || distortedCoord.x > 1.0 || distortedCoord.y < 0.0 || distortedCoord.y > 1.0) {
-                    finalColor = vec3(0.0, 0.0, 0.0); // Render black for out-of-bounds
-                } else {
-                    // Chromatic Aberration based on distorted coordinates
-                    float r_channel = texture2D(u_webcamTexture, distortedCoord + vec2(u_phosphorOffset, 0.0)).r;
-                    float g_channel = texture2D(u_webcamTexture, distortedCoord).g;
-                    float b_channel = texture2D(u_webcamTexture, distortedCoord - vec2(u_phosphorOffset, 0.0)).b;
-                    finalColor = vec3(r_channel, g_channel, b_channel);
+                if (distortedUV.x >= 0.0 && distortedUV.x <= 1.0 && distortedUV.y >= 0.0 && distortedUV.y <= 1.0) {
+                    // Chromatic Aberration
+                    vec2 r_offset = vec2(u_phosphorOffset, 0.0);
+                    vec2 b_offset = vec2(-u_phosphorOffset, 0.0);
+                    float r_channel = texture2D(u_webcamTexture, distortedUV + r_offset).r;
+                    float g_channel = texture2D(u_webcamTexture, distortedUV).g;
+                    float b_channel = texture2D(u_webcamTexture, distortedUV + b_offset).b;
+                    finalColor = vec4(r_channel, g_channel, b_channel, 1.0);
 
-                    // Scanlines (applied to distorted coordinates to follow curvature)
-                    // A common way to do scanlines that gives a nice falloff:
-                    float scanlineEffect = sin(distortedCoord.y * u_scanlineDensity);
-                    finalColor.rgb *= (1.0 - u_scanlineIntensity * (0.25 + 0.75 * pow(scanlineEffect, 2.0)));
-
-
-                    // Vignette (applied using original, non-distorted texcoords for stability)
-                    // Using smoothstep for a smoother falloff. Vignette softness controls the transition.
-                    // Higher u_vignetteStrength means darker edges.
-                    // u_vignetteSoftness close to 0 means sharp edge, close to u_vignetteStrength means very soft.
-                    // Ensure softness doesn't exceed strength.
-                    float vigAmount = smoothstep(u_vignetteStrength, max(0.0, u_vignetteStrength - u_vignetteSoftness), length(centeredOriginalTexCoord * 1.5)); // Multiplier on centered for extent
-                    finalColor.rgb *= vigAmount;
+                    // Scanlines
+                    float scanlineEffect = sin(distortedUV.y * u_scanlineDensity * 3.1415926535 * 2.0); // Using PI for frequency
+                    scanlineEffect = (scanlineEffect + 1.0) * 0.5; // Remap to 0-1
+                    finalColor.rgb *= (1.0 - u_scanlineIntensity * (1.0 - scanlineEffect));
                 }
 
-                // Final color adjustments (Brightness, Contrast, Saturation)
-                finalColor = adjustSaturation(
-                    adjustBrightnessContrast(finalColor, u_brightness, u_contrast),
-                    u_saturation
-                );
-
-                finalColor = clamp(finalColor, 0.0, 1.0);
-                gl_FragColor = vec4(finalColor, 1.0);
-            }`;
-
-        /* @tweakable simple horizontal mirror shader */
-        const mirrorShader = `
-            precision highp float;
-            varying vec2 v_texCoord;
-            uniform sampler2D u_webcamTexture;
-            uniform float u_time;
-            uniform float u_brightness;
-            uniform float u_contrast;
-            uniform float u_saturation;
-            uniform float u_intensity; // For consistency
-
-            // Copied helper functions
-            vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
-                vec3 result = color + brightness;
-                result = (result - 0.5) * contrast + 0.5;
-                return clamp(result, 0.0, 1.0);
-            }
-
-            vec3 adjustSaturation(vec3 color, float saturation) {
-                vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
-                return mix(gray, color, saturation);
-            }
-
-            void main() {
-                // Most shaders use 'vec2 mirroredTexCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y);'
-                // to sample u_webcamTexture because the webcam feed itself might be naturally unmirrored.
-                // This 'mirrorShader' aims to display the *actual* non-mirrored webcam feed.
-                // Thus, we sample u_webcamTexture with the *original* v_texCoord.x.
-                // If u_webcamTexture is already mirrored (as is the case by default in this app's webcam setup),
-                // then sampling with v_texCoord.x effectively "un-mirrors" it.
-                vec4 finalColor = texture2D(u_webcamTexture, vec2(v_texCoord.x, v_texCoord.y));
-
-                finalColor.rgb = adjustSaturation(
-                    adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
-                    u_saturation
-                );
-
-                gl_FragColor = finalColor;
-            }`;
-
-        const waveWarpShader = `
-            precision highp float;
-            varying vec2 v_texCoord;
-            uniform sampler2D u_webcamTexture;
-            uniform float u_time;
-            uniform float u_brightness;
-            uniform float u_contrast;
-            uniform float u_saturation;
-            uniform float u_intensity; // General intensity, can modulate wave amplitude
-
-            uniform float u_waveDensity;  // e.g., 10.0 to 50.0
-            uniform float u_waveSpeed;    // e.g., 0.5 to 5.0
-            uniform float u_waveAmplitude; // e.g., 0.01 to 0.1
-
-            // Copied helper functions
-            vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
-                vec3 result = color + brightness;
-                result = (result - 0.5) * contrast + 0.5;
-                return clamp(result, 0.0, 1.0);
-            }
-
-            vec3 adjustSaturation(vec3 color, float saturation) {
-                vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
-                return mix(gray, color, saturation);
-            }
-
-            void main() {
-                vec2 texCoord = v_texCoord;
-                // Other effects already mirror webcam input, so we do too for consistency.
-                texCoord.x = 1.0 - texCoord.x;
-
-                float modulatedAmplitude = u_waveAmplitude * (0.5 + u_intensity * 0.5); // Let global intensity affect wave strength
-
-                texCoord.y += sin(texCoord.x * u_waveDensity + u_time * u_waveSpeed) * modulatedAmplitude;
-                // Optional: texCoord.x += cos(texCoord.y * u_waveDensity * 0.7 + u_time * u_waveSpeed * 0.7) * modulatedAmplitude * 0.5; // Second wave for X
-
-                vec4 finalColor;
-                // Prevent sampling outside texture bounds if waves are too strong
-                if (texCoord.y < 0.0 || texCoord.y > 1.0 || texCoord.x < 0.0 || texCoord.x > 1.0) {
-                    finalColor = vec4(0.0, 0.0, 0.0, 1.0); // Black if out of bounds
-                } else {
-                    finalColor = texture2D(u_webcamTexture, texCoord);
-                }
-
-                finalColor.rgb = adjustSaturation(
-                    adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
-                    u_saturation
-                );
-                gl_FragColor = finalColor;
-            }`;
-
-        const fisheyeShader = `
-            precision highp float;
-            varying vec2 v_texCoord;
-            uniform sampler2D u_webcamTexture;
-            uniform float u_time;
-            uniform float u_brightness;
-            uniform float u_contrast;
-            uniform float u_saturation;
-            uniform float u_intensity; // General intensity
-
-            uniform float u_fisheyeStrength;
-
-            // Copied helper functions
-            vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
-                vec3 result = color + brightness;
-                result = (result - 0.5) * contrast + 0.5;
-                return clamp(result, 0.0, 1.0);
-            }
-
-            vec3 adjustSaturation(vec3 color, float saturation) {
-                vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
-                return mix(gray, color, saturation);
-            }
-
-            void main() {
-                vec2 texCoord = v_texCoord;
-                texCoord.x = 1.0 - texCoord.x; // Mirror webcam input
-
-                vec2 uv_centered = texCoord * 2.0 - 1.0;
-                float d = length(uv_centered);
-
-                if (d == 0.0) {
-                    // No change for center
-                } else {
-                     uv_centered = uv_centered / (1.0 + u_fisheyeStrength * d);
-                }
-
-                vec2 finalUV = (uv_centered + 1.0) / 2.0;
-
-                vec4 finalColor;
-                if (finalUV.x < 0.0 || finalUV.x > 1.0 || finalUV.y < 0.0 || finalUV.y > 1.0) {
-                    finalColor = vec4(0.0, 0.0, 0.0, 1.0);
-                } else {
-                    finalColor = texture2D(u_webcamTexture, finalUV);
-                }
-
-                finalColor.rgb = adjustSaturation(
-                    adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
-                    u_saturation
-                );
-                gl_FragColor = finalColor;
-            }`;
-
-        const noiseGlitchShader = `
-            precision highp float;
-            varying vec2 v_texCoord;
-            uniform sampler2D u_webcamTexture;
-            uniform float u_time;
-            uniform float u_brightness;
-            uniform float u_contrast;
-            uniform float u_saturation;
-            uniform float u_intensity; // General intensity, can modulate glitch strength
-
-            uniform float u_glitchStrength; // e.g., 0.0 to 0.5 or 1.0
-
-            // Noise functions
-            float random (vec2 st) {
-                return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123 + u_time * 0.1);
-            }
-
-            float noise (vec2 st) {
-                vec2 i = floor(st);
-                vec2 f = fract(st);
-                float a = random(i);
-                float b = random(i + vec2(1.0,0.0));
-                float c = random(i + vec2(0.0,1.0));
-                float d = random(i + vec2(1.0,1.0));
-                vec2 u = f*f*(3.0-2.0*f);
-                return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-            }
-
-            // Copied helper functions
-            vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
-                vec3 result = color + brightness;
-                result = (result - 0.5) * contrast + 0.5;
-                return clamp(result, 0.0, 1.0);
-            }
-
-            vec3 adjustSaturation(vec3 color, float saturation) {
-                vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
-                return mix(gray, color, saturation);
-            }
-
-            void main() {
-                vec2 texCoord = v_texCoord;
-                texCoord.x = 1.0 - texCoord.x; // Mirror webcam input
-
-                float actualGlitchStrength = u_glitchStrength * (0.5 + u_intensity * 0.5);
-                vec4 finalColor = texture2D(u_webcamTexture, texCoord);
-
-                // Horizontal line "slip" glitch
-                if (random(vec2(texCoord.y * (10.0 + actualGlitchStrength * 20.0), u_time)) > (1.0 - actualGlitchStrength * 0.25)) {
-                    float slipOffset = (random(vec2(texCoord.y * 1.3, u_time * 1.1)) - 0.5) * 0.3;
-                    finalColor = texture2D(u_webcamTexture, vec2(fract(texCoord.x + slipOffset), texCoord.y));
-                }
-
-                // Optional: Add a subtle color channel offset based on noise
-                if (actualGlitchStrength > 0.01) {
-                     float rNoise = (noise(texCoord * 50.0 + u_time * 2.0) - 0.5) * 0.1 * actualGlitchStrength;
-                     finalColor.r = fract(finalColor.r + rNoise);
-                }
-
-                finalColor.rgb = adjustSaturation(
-                    adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
-                    u_saturation
-                );
-                gl_FragColor = clamp(finalColor, 0.0, 1.0);
-            }`;
-
-        const displacementMapShader = `
-            precision highp float;
-            varying vec2 v_texCoord;
-
-            uniform sampler2D u_webcamTexture;        // Current frame
-            uniform sampler2D u_previousFrameTexture; // Previous frame to use as displacement map
-
-            uniform float u_time;
-            uniform float u_brightness;
-            uniform float u_contrast;
-            uniform float u_saturation;
-            uniform float u_intensity; // General intensity, can modulate displacement strength
-
-            uniform float u_displacementStrength; // e.g., 0.0 to 0.2
-
-            // Copied helper functions
-            vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
-                vec3 result = color + brightness;
-                result = (result - 0.5) * contrast + 0.5;
-                return clamp(result, 0.0, 1.0);
-            }
-
-            vec3 adjustSaturation(vec3 color, float saturation) {
-                vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
-                return mix(gray, color, saturation);
-            }
-
-            float getLuminance(vec3 color) {
-                return dot(color, vec3(0.299, 0.587, 0.114));
-            }
-
-            void main() {
-                vec2 screenUV = v_texCoord; // UV for screen, and for sampling previous frame output
-
-                // Get luminance from previous frame (which is already correctly oriented for screenUV)
-                vec4 prevFrameColor = texture2D(u_previousFrameTexture, screenUV);
-                float prevFrameLuminance = getLuminance(prevFrameColor.rgb);
-
-                float actualDisplacementStrength = u_displacementStrength * (0.5 + u_intensity * 0.5);
-                vec2 displacementOffset = vec2(prevFrameLuminance - 0.5) * actualDisplacementStrength;
-
-                // UV for sampling the *current* webcam texture.
-                // Most other effects mirror the raw webcam feed. So we do the same here.
-                vec2 webcamSampleUV = vec2(1.0 - screenUV.x, screenUV.y);
-                vec2 displacedWebcamSampleUV = webcamSampleUV + displacementOffset;
-
-                vec4 finalColor;
-                if (displacedWebcamSampleUV.x < 0.0 || displacedWebcamSampleUV.x > 1.0 ||
-                    displacedWebcamSampleUV.y < 0.0 || displacedWebcamSampleUV.y > 1.0) {
-                    finalColor = vec4(0.0, 0.0, 0.0, 1.0);
-                } else {
-                    finalColor = texture2D(u_webcamTexture, displacedWebcamSampleUV);
-                }
+                // Vignette
+                float vignette = 1.0 - u_vignetteStrength * smoothstep(u_vignetteSoftness, 0.0, length(centeredUV * 1.414)); // 1.414 approx sqrt(2) for corners
+                finalColor.rgb *= vignette;
 
                 finalColor.rgb = adjustSaturation(
                     adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
@@ -1029,179 +681,295 @@
                 gl_FragColor = finalColor;
             }
         `;
-        
+
+        const mirrorShaderGLSL = `
+precision highp float;
+varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture;
+uniform float u_brightness;
+uniform float u_contrast;
+uniform float u_saturation;
+// uniform float u_intensity; // Available but not used by this simple mirror
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    // Most shaders use vec2(1.0 - v_texCoord.x, v_texCoord.y) to mirror webcam input.
+    // This shader uses v_texCoord.x directly to show the NON-mirrored version,
+    // thus appearing as a "Horizontal Mirror" relative to the other effects.
+    vec4 finalColor = texture2D(u_webcamTexture, vec2(v_texCoord.x, v_texCoord.y));
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
+const waveWarpShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_waveDensity; uniform float u_waveSpeed; uniform float u_waveAmplitude;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    float modulatedAmplitude = u_waveAmplitude * (0.5 + u_intensity * 0.5);
+    texCoord.y += sin(texCoord.x * u_waveDensity + u_time * u_waveSpeed) * modulatedAmplitude;
+    vec4 finalColor;
+    if (texCoord.y < 0.0 || texCoord.y > 1.0 || texCoord.x < 0.0 || texCoord.x > 1.0) { finalColor = vec4(0.0,0.0,0.0,1.0); }
+    else { finalColor = texture2D(u_webcamTexture, texCoord); }
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
+const kaleidoscopeShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_kaleidoSegments;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+const float PI = 3.14159265359;
+void main() {
+    vec2 originalTexCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    vec2 p = originalTexCoord - 0.5;
+    float r = length(p); float angle = atan(p.y, p.x);
+    float segments = max(2.0, floor(u_kaleidoSegments));
+    float segmentAngleSlice = PI / segments;
+    angle += u_time * 0.1 * (u_intensity - 0.5) * 2.0; // Intensity affects rotation speed/direction
+    angle = mod(angle, segmentAngleSlice * 2.0);
+    if (angle > segmentAngleSlice) { angle = (segmentAngleSlice * 2.0) - angle; }
+    vec2 uvKaleido = vec2(r * cos(angle), r * sin(angle)) + 0.5;
+    vec4 finalColor = texture2D(u_webcamTexture, uvKaleido);
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
+const fisheyeShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_fisheyeStrength;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    vec2 uv_centered = texCoord * 2.0 - 1.0;
+    float d = length(uv_centered);
+    if (d != 0.0) { // Avoid division by zero at center
+        uv_centered = uv_centered / (1.0 + u_fisheyeStrength * d);
+    }
+    vec2 finalUV = (uv_centered + 1.0) / 2.0;
+    vec4 finalColor;
+    if (finalUV.x < 0.0 || finalUV.x > 1.0 || finalUV.y < 0.0 || finalUV.y > 1.0) { finalColor = vec4(0.0,0.0,0.0,1.0); }
+    else { finalColor = texture2D(u_webcamTexture, finalUV); }
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
+const noiseGlitchShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_glitchStrength;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+float random (vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123 + u_time * 0.1); }
+float noise (vec2 st) { vec2 i=floor(st);vec2 f=fract(st);float a=random(i);float b=random(i+vec2(1.,0.));float c=random(i+vec2(0.,1.));float d=random(i+vec2(1.,1.));vec2 u=f*f*(3.-2.*f);return mix(a,b,u.x)+(c-a)*u.y*(1.-u.x)+(d-b)*u.x*u.y;}
+
+void main() {
+    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    float actualGlitchStrength = u_glitchStrength * (0.5 + u_intensity * 0.5);
+    vec4 finalColor = texture2D(u_webcamTexture, texCoord);
+    if (random(vec2(texCoord.y * (10.0 + actualGlitchStrength * 20.0), u_time)) > (1.0 - actualGlitchStrength * 0.25)) {
+        float slipOffset = (random(vec2(texCoord.y * 1.3, u_time * 1.1)) - 0.5) * 0.3;
+        finalColor = texture2D(u_webcamTexture, vec2(fract(texCoord.x + slipOffset), texCoord.y));
+    }
+    if (actualGlitchStrength > 0.01) {
+         float rNoise = (noise(texCoord * 50.0 + u_time * 2.0) - 0.5) * 0.1 * actualGlitchStrength;
+         finalColor.r = fract(finalColor.r + rNoise);
+    }
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = clamp(finalColor, 0.0, 1.0);
+}`;
+
+// Feedback Displace Shader
+const feedbackDisplaceShaderGLSL = `
+    precision highp float; // Changed to highp for consistency and potential precision needs
+    varying vec2 v_texCoord;
+
+    // u_webcamTexture (TEXTURE0) is the current live input
+    // u_previousFrameTexture (TEXTURE1) is the output of the last frame, used here as the displacement map source
+    uniform sampler2D u_webcamTexture;
+    uniform sampler2D u_previousFrameTexture; // This will be used as the displacement map.
+    // uniform sampler2D u_displacement_texture_feedback; // This is conceptually u_previousFrameTexture (TEXTURE1) for this effect.
+                                                        // The actual uniform u_displacement_texture_feedback will be set to TEXTURE1 in drawScene.
+    uniform float u_displacement_map_strength;
+    uniform vec2 u_resolution;
+    uniform float u_brightness; // Standard post-processing
+    uniform float u_contrast;   // Standard post-processing
+    uniform float u_saturation; // Standard post-processing
+    uniform float u_intensity;  // To modulate displacement strength
+
+    vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+        vec3 result = color + brightness;
+        result = (result - 0.5) * contrast + 0.5;
+        return clamp(result, 0.0, 1.0);
+    }
+
+    vec3 adjustSaturation(vec3 color, float saturation) {
+        vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+        return mix(gray, color, saturation);
+    }
+
+    void main() {
+        // Sample the displacement map (using previous frame's output, which is on u_previousFrameTexture)
+        vec4 displacementColor = texture2D(u_previousFrameTexture, v_texCoord);
+
+        // Modulate displacement strength with intensity
+        float actualDisplacementStrength = u_displacement_map_strength * (0.5 + u_intensity * 0.5);
+
+        vec2 displacement = (displacementColor.rg * 2.0 - 1.0) * actualDisplacementStrength;
+        // Optional: For pixel-based displacement, uncomment and ensure u_resolution is correctly passed
+        // if (u_resolution.x > 0.0 && u_resolution.y > 0.0) {
+        //     displacement = (displacementColor.rg * 2.0 - 1.0) * actualDisplacementStrength / u_resolution;
+        // } else {
+        //     displacement = (displacementColor.rg * 2.0 - 1.0) * actualDisplacementStrength * 0.01; // Fallback if resolution is 0
+        // }
+
+        // Standard mirroring for webcam input before displacement
+        vec2 mirroredWebcamTexcoord = vec2(1.0 - v_texCoord.x, v_texCoord.y);
+        vec2 displacedTexcoord = mirroredWebcamTexcoord + displacement;
+
+        vec4 finalColor;
+        // Boundary check after displacement
+        if (displacedTexcoord.x < 0.0 || displacedTexcoord.x > 1.0 || displacedTexcoord.y < 0.0 || displacedTexcoord.y > 1.0) {
+            finalColor = vec4(0.0, 0.0, 0.0, 1.0); // Output black if out of bounds
+        } else {
+            finalColor = texture2D(u_webcamTexture, displacedTexcoord);
+        }
+
+        finalColor.rgb = adjustSaturation(
+            adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
+            u_saturation
+        );
+        gl_FragColor = finalColor;
+    }
+`;
+
+const displacementMapShaderGLSL = `
+    precision highp float; varying vec2 v_texCoord;
+    uniform sampler2D u_webcamTexture; uniform sampler2D u_previousFrameTexture;
+    uniform float u_time; uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+    uniform float u_displacementStrength;
+
+    vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+        vec3 result = color + brightness;
+        result = (result - 0.5) * contrast + 0.5;
+        return clamp(result, 0.0, 1.0);
+    }
+    vec3 adjustSaturation(vec3 color, float saturation) {
+        vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+        return mix(gray, color, saturation);
+    }
+    float getLuminance(vec3 color) {
+        return dot(color, vec3(0.299, 0.587, 0.114));
+    }
+
+    void main() {
+        vec2 screenUV = v_texCoord;
+        vec4 prevFrameColor = texture2D(u_previousFrameTexture, screenUV);
+        float prevFrameLuminance = getLuminance(prevFrameColor.rgb);
+        float actualDisplacementStrength = u_displacementStrength * (0.5 + u_intensity * 0.5);
+        vec2 displacementOffset = vec2(prevFrameLuminance - 0.5) * actualDisplacementStrength;
+        vec2 webcamSampleUV = vec2(1.0 - screenUV.x, screenUV.y);
+        vec2 displacedWebcamSampleUV = webcamSampleUV + displacementOffset;
+        vec4 finalColor;
+        if (displacedWebcamSampleUV.x < 0.0 || displacedWebcamSampleUV.x > 1.0 || displacedWebcamSampleUV.y < 0.0 || displacedWebcamSampleUV.y > 1.0) {
+            finalColor = vec4(0.0, 0.0, 0.0, 1.0);
+        } else {
+            finalColor = texture2D(u_webcamTexture, displacedWebcamSampleUV);
+        }
+        finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+        gl_FragColor = finalColor;
+}`;
+
+const fisheyeShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_fisheyeStrength;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    vec2 uv_centered = texCoord * 2.0 - 1.0;
+    float d = length(uv_centered);
+    if (d != 0.0) { // Avoid division by zero at center
+        uv_centered = uv_centered / (1.0 + u_fisheyeStrength * d);
+    }
+    vec2 finalUV = (uv_centered + 1.0) / 2.0;
+    vec4 finalColor;
+    if (finalUV.x < 0.0 || finalUV.x > 1.0 || finalUV.y < 0.0 || finalUV.y > 1.0) { finalColor = vec4(0.0,0.0,0.0,1.0); }
+    else { finalColor = texture2D(u_webcamTexture, finalUV); }
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
         const fsPassthroughSource = ` precision mediump float; varying vec2 v_texCoord; uniform sampler2D u_textureToDraw; void main() { gl_FragColor = texture2D(u_textureToDraw, v_texCoord); } `;
-
-        const refractionShader = `
-        precision highp float;
-        varying vec2 v_texCoord;
-
-        uniform sampler2D u_webcamTexture;
-        uniform float u_time;
-        uniform float u_brightness;
-        uniform float u_contrast;
-        uniform float u_saturation;
-        uniform float u_intensity; // General intensity, can modulate refraction parameters
-
-        // New uniforms for refraction effect
-        uniform float u_refractionStrength; // e.g., 0.0 to 0.1
-        uniform float u_rippleFrequency;    // e.g., 5.0 to 50.0
-        uniform float u_rippleSpeed;        // e.g., 0.1 to 2.0
-
-        // Copied helper functions
-        vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
-            vec3 result = color + brightness;
-            result = (result - 0.5) * contrast + 0.5;
-            return clamp(result, 0.0, 1.0);
-        }
-
-        vec3 adjustSaturation(vec3 color, float saturation) {
-            vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
-            return mix(gray, color, saturation);
-        }
-
-        void main() {
-            vec2 mirroredUV = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard webcam mirroring
-
-            // Procedural normal generation (simple ripples on mirrored space)
-            float timeFactor = u_time * u_rippleSpeed * (1.0 + u_intensity * 0.2); // Intensity has less impact on speed
-            vec2 normalOffset = vec2(
-                sin(mirroredUV.y * u_rippleFrequency + timeFactor),
-                cos(mirroredUV.x * u_rippleFrequency + timeFactor)
-            ) * 0.1; // Max offset for normals, keep it small
-
-            // Apply refraction: offset texture coordinates by the 'normal'
-            float actualRefractionStrength = u_refractionStrength * (1.0 + u_intensity * 1.0); // Intensity has more impact on strength
-                                                                                             // Max strength can be > u_refractionStrength
-
-            vec2 refractedSampleUV = mirroredUV + normalOffset * actualRefractionStrength;
-
-            vec4 finalColor;
-            if (refractedSampleUV.x < 0.0 || refractedSampleUV.x > 1.0 ||
-                refractedSampleUV.y < 0.0 || refractedSampleUV.y > 1.0) {
-                finalColor = vec4(0.0, 0.0, 0.0, 1.0);
-            } else {
-                finalColor = texture2D(u_webcamTexture, refractedSampleUV);
-            }
-
-            finalColor.rgb = adjustSaturation(
-                adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
-                u_saturation
-            );
-            gl_FragColor = finalColor;
-        }
-    `;
-
-    const drawSliceShaderSource = `
-        precision highp float;
-        varying vec2 v_texCoord; // UV of the quad we are drawing (normalized 0-1)
-
-        uniform sampler2D u_webcamTexture;
-        uniform float u_sliceSamplePosition; // Where to sample *from* the webcam (0 to 1, e.g., 0.5 for center)
-        // uniform float u_sliceThicknessWebcam; // Future use: How thick a slice to sample *from* webcam (0 to 1)
-        uniform float u_scanDirection; // 0 for vertical slit, 1 for horizontal slit
-
-        void main() {
-            vec2 sampleUV;
-            // Webcam is usually pre-mirrored by other effects.
-            // For consistency, we sample from a mirrored coordinate space.
-            vec2 mirrored_v_texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y);
-
-            if (u_scanDirection == 0.0) { // Vertical slit (samples a column from webcam)
-                // Sample from a fixed X-coordinate on the webcam (u_sliceSamplePosition)
-                // and use the current varying Y-coordinate from the destination quad.
-                sampleUV = vec2(u_sliceSamplePosition, mirrored_v_texCoord.y);
-            } else { // Horizontal slit (samples a row from webcam)
-                // Sample from a fixed Y-coordinate on the webcam (u_sliceSamplePosition)
-                // and use the current varying X-coordinate from the destination quad.
-                sampleUV = vec2(mirrored_v_texCoord.x, u_sliceSamplePosition);
-            }
-
-            gl_FragColor = texture2D(u_webcamTexture, sampleUV);
-        }`;
-
-        const faceMeltShaderGLSL = `
-        precision highp float;
-        varying vec2 v_texCoord;
-
-        uniform sampler2D u_webcamTexture;
-        uniform float u_time; // For potential animation, or consistency
-        uniform float u_brightness;
-        uniform float u_contrast;
-        uniform float u_saturation;
-        uniform float u_intensity; // General intensity, can modulate melt parameters
-
-        // Melt Source Points (ensure NUM_MELT_POINTS matches JS const)
-        uniform vec2 u_meltPoint0;
-        uniform vec2 u_meltPoint1;
-        uniform vec2 u_meltPoint2;
-        uniform vec2 u_meltPoint3;
-        uniform vec2 u_meltPoint4;
-
-        uniform float u_meltStrength; // Controls how far the melt "drips"
-        uniform float u_meltSpread;   // Controls horizontal spread of a drip
-
-        // Copied helper functions
-        vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
-            vec3 result = color + brightness;
-            result = (result - 0.5) * contrast + 0.5;
-            return clamp(result, 0.0, 1.0);
-        }
-
-        vec3 adjustSaturation(vec3 color, float saturation) {
-            vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
-            return mix(gray, color, saturation);
-        }
-
-        // Function to apply melt from a single source point
-        vec3 applyMeltFromPoint(vec3 currentColor, vec2 currentUV, vec2 meltSourcePoint, sampler2D tex) {
-            if (meltSourcePoint.x < 0.0) return currentColor; // Skip if point is off-screen (default)
-
-            float dist_x = abs(currentUV.x - meltSourcePoint.x);
-
-            // Modulated parameters by global intensity
-            float actualMeltSpread = u_meltSpread * (0.5 + u_intensity * 0.5);
-            float actualMeltStrength = u_meltStrength * (0.5 + u_intensity * 1.5); // Intensity has more effect on strength
-
-            if (dist_x < actualMeltSpread && currentUV.y > meltSourcePoint.y) {
-                float horizontal_influence = 1.0 - smoothstep(0.0, actualMeltSpread, dist_x);
-                float vertical_distance_from_point = currentUV.y - meltSourcePoint.y;
-
-                // Melt factor: strong if directly under and close, fades further down and sideways
-                // actualMeltStrength defines the effective "length" of the drip
-                float melt_factor = horizontal_influence * (1.0 - smoothstep(0.0, actualMeltStrength, vertical_distance_from_point));
-
-                if (melt_factor > 0.0) {
-                    // Sample color from the source of the drip (at the meltSourcePoint's y-level, but current fragment's x)
-                    // This creates a "smearing" effect from that source line downwards.
-                    vec4 sourceColor = texture2D(tex, vec2(currentUV.x, meltSourcePoint.y));
-                    return mix(currentColor, sourceColor.rgb, melt_factor);
-                }
-            }
-            return currentColor;
-        }
-
-        void main() {
-            vec2 mirroredUV = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard webcam mirroring
-            vec3 finalColor = texture2D(u_webcamTexture, mirroredUV).rgb;
-
-            // Apply melt from each point
-            // The meltSourcePoints (u_meltPointN) are already in the mirrored UV space from JS
-            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint0, u_webcamTexture);
-            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint1, u_webcamTexture);
-            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint2, u_webcamTexture);
-            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint3, u_webcamTexture);
-            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint4, u_webcamTexture);
-
-            vec4 outputColor = vec4(finalColor, 1.0);
-            outputColor.rgb = adjustSaturation(
-                adjustBrightnessContrast(outputColor.rgb, u_brightness, u_contrast),
-                u_saturation
-            );
-            gl_FragColor = outputColor;
-        }
-    `;
-
         const canvas = document.getElementById('outputCanvas');
         const video = document.getElementById('webcamVideo');
         const errorMessageDiv = document.getElementById('errorMessage');
@@ -1210,15 +978,6 @@
         let mediaReady = false;
         let startTime = performance.now(); let renderLoopId = null;
         let fbo1, fbo2, fboCopy; let fbTexture1, fbTexture2; let currentSourceFBO, currentDestFBO; let currentSourceTexture, currentDestTexture; let webcamTexture;
-        let slitScanFBO = null;
-        let slitScanTexture = null;
-        let isSlitScanInitialized = false;
-        let scanPosition = 0.0;         // Current scan position (0 to 1)
-        let slitScanSpeed = 0.005;      // Speed of scanning per frame
-        let sliceThickness = 0.01;      // Thickness of the slice (as fraction of width/height)
-        let scanDirection = 0;          // 0 for vertical slit (scans horizontally), 1 for horizontal slit (scans vertically)
-        let slitScanProgram = null;     // To hold the shader program for drawing slices
-        let sliceSamplePosition = 0.5;  // Where to sample from webcam (0.5 is center)
         let frameCount = 0; let isFrozen = false; let frozenFrameTextures = []; const MAX_HISTORY_LENGTH = 16; let frameHistoryTextures = []; let historyWriteIndex = 0;
         
         /* @tweakable the main control values that adjust visual effects */
@@ -1244,17 +1003,10 @@
             waveDensity: 20.0,
             waveSpeed: 1.0,
             waveAmplitude: 0.02,
+            kaleidoSegments: 6.0,
             fisheyeStrength: 0.3,
             glitchStrength: 0.1,
-            displacementMapStrength: 0.05,
-            refractionStrength: 0.02,
-            rippleFrequency: 20.0,
-            rippleSpeed: 0.5,
-            slitScanSpeed: 0.005,
-            sliceThickness: 0.01,
-            sliceSamplePosition: 0.5,
-            meltStrength: 0.1,    // e.g., 0.0 to 0.5 or 1.0
-            meltSpread: 0.05,     // e.g., 0.01 to 0.2
+            displacementMapStrength: 0.02, // Feedback Displace
         };
         
         // Default presets for different visual styles
@@ -1274,13 +1026,12 @@
             feedback: feedbackShader,
             colorshift: colorShiftShader,
             crt: crtShader,
-            mirror: mirrorShader,
-            wavewarp: waveWarpShader,
-            fisheye: fisheyeShader,
-            noiseGlitch: noiseGlitchShader,
-            displacementMap: displacementMapShader,
-            refraction: refractionShader,
-            facemelt: faceMeltShaderGLSL,
+            mirror: mirrorShaderGLSL,
+            wavewarp: waveWarpShaderGLSL,
+            kaleidoscope: kaleidoscopeShaderGLSL,
+            noiseGlitch: noiseGlitchShaderGLSL,
+            fisheye: fisheyeShaderGLSL,
+            feedbackDisplace: feedbackDisplaceShaderGLSL
         };
 
         const shaderControlRelevance = {
@@ -1288,38 +1039,21 @@
             'pixelsort': ['intensity', 'displacement', 'feedback', 'threshold'],
             'feedback': ['intensity', 'displacement', 'feedback', 'threshold'],
             'colorshift': ['intensity', 'displacement', 'feedback', 'threshold'],
-            'crt': [
-                'scanlineIntensity',
-                'scanlineDensity',
-                'curvatureAmount',
-                'phosphorOffset',
-                'vignetteStrength',
-                'vignetteSoftness'
-            ],
+            'crt': ['scanlineIntensity', 'scanlineDensity', 'curvatureAmount', 'phosphorOffset', 'vignetteStrength', 'vignetteSoftness'],
             'mirror': [],
             'wavewarp': ['waveDensity', 'waveSpeed', 'waveAmplitude'],
+            'kaleidoscope': ['kaleidoSegments'],
             'fisheye': ['fisheyeStrength'],
             'noiseGlitch': ['glitchStrength'],
-            'displacementMap': ['displacementMapStrength'],
-            'refraction': ['refractionStrength', 'rippleFrequency', 'rippleSpeed'],
-            'slitscan': ['slitScanSpeed', 'sliceThickness', 'sliceSamplePosition', 'scanDirection', 'slitScanReset'],
-            'facemelt': ['meltStrength', 'meltSpread'],
+            'feedbackDisplace': ['displacementMapStrength', 'intensity']
         };
 
         let audioContext = null;
         let analyserNode = null;
         let audioDataArray = null;
         let isAudioSetup = false;
-        let audioReactiveEnabled = false; // Will be controlled by a UI element later
-        let smoothedVolume = 0.0; // For the calculated audio level
-
-        // Face Tracking Globals
-        let faceLandmarkModel = null;
-        let detectedFaces = [];
-        let isFaceModelReady = false;
-        let faceTrackingEnabled = false;
-        let meltSourcePoints = []; // To store {x, y} of selected landmarks for the shader
-        const NUM_MELT_POINTS = 5; // Define how many points we'll use
+        let audioReactiveEnabled = false;
+        let smoothedVolume = 0.0;
 
         const freezeButton = document.getElementById('freezeButton'); const clearFreezeButton = document.getElementById('clearFreezeButton');
         const randomizeButton = document.getElementById('randomizeButton');
@@ -1356,6 +1090,56 @@
         function initBuffers() { positionBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1.,-1., 1.,-1., -1., 1., -1., 1., 1.,-1., 1., 1.,]), gl.STATIC_DRAW); texCoordBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0.,0., 1.,0., 0.,1., 0.,1., 1.,0., 1.,1.,]), gl.STATIC_DRAW); gl.bindBuffer(gl.ARRAY_BUFFER, null); return true; }
         function createAndSetupTexture(width, height) { if (!gl) return null; const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null); } catch (e) { return null; } return tex; }
         function copyTexture(sourceTexture, destTexture) { if (!gl || !passthroughProgram || !fboCopy || !positionBuffer || !texCoordBuffer) { return; } gl.bindFramebuffer(gl.FRAMEBUFFER, fboCopy); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, destTexture, 0); gl.viewport(0, 0, canvas.width, canvas.height); gl.useProgram(passthroughProgram); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, sourceTexture); gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0); gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(passthroughProgram.aPosLoc); gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer); gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(passthroughProgram.aTexLoc); gl.drawArrays(gl.TRIANGLES, 0, 6); gl.bindFramebuffer(gl.FRAMEBUFFER, null); }
+
+        async function setupAudio() {
+            if (isAudioSetup) return true;
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showError("Audio Reactivity Error: getUserMedia not supported.", false);
+                return false;
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                analyserNode = audioContext.createAnalyser();
+                analyserNode.fftSize = 256;
+                source.connect(analyserNode);
+                audioDataArray = new Uint8Array(analyserNode.frequencyBinCount);
+                isAudioSetup = true;
+                console.log("Audio setup complete.");
+                requestAnimationFrame(processAudioFrame); // Start processing loop
+                return true;
+            } catch (err) {
+                showError(`Audio Reactivity Error: ${err.name} - ${err.message}. Check mic permissions.`, false);
+                isAudioSetup = false;
+                return false;
+            }
+        }
+
+        function processAudioFrame() {
+            if (!isAudioSetup || !analyserNode || !audioDataArray) {
+                if (audioReactiveEnabled) requestAnimationFrame(processAudioFrame); // Keep trying if enabled
+                return;
+            }
+            if (!audioReactiveEnabled) {
+                smoothedVolume = 0.0;
+                return;
+            }
+            analyserNode.getByteFrequencyData(audioDataArray);
+            let sumOfSquares = 0;
+            for (let i = 0; i < audioDataArray.length; i++) {
+                const normalizedValue = audioDataArray[i] / 255.0;
+                sumOfSquares += normalizedValue * normalizedValue;
+            }
+            const rms = Math.sqrt(sumOfSquares / audioDataArray.length);
+            const smoothingFactor = 0.1;
+            smoothedVolume = rms * smoothingFactor + smoothedVolume * (1.0 - smoothingFactor);
+            smoothedVolume = Math.min(1.0, Math.max(0.0, smoothedVolume));
+            if (audioReactiveEnabled) {
+                requestAnimationFrame(processAudioFrame);
+            }
+        }
+
         function initFramebuffersAndTextures(width, height) {
             if (fbTexture1) gl.deleteTexture(fbTexture1); if (fbTexture2) gl.deleteTexture(fbTexture2); if (webcamTexture) gl.deleteTexture(webcamTexture);
             frameHistoryTextures.forEach(tex => gl.deleteTexture(tex)); frozenFrameTextures.forEach(tex => gl.deleteTexture(tex));
@@ -1378,46 +1162,6 @@
             [fbTexture1, fbTexture2, webcamTexture, ...frameHistoryTextures].forEach(tex => { gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT); });
             gl.bindFramebuffer(gl.FRAMEBUFFER, null); return true;
         }
-
-        function initSlitScanFramebuffer(width, height) {
-            if (!gl) return false;
-
-            if (slitScanFBO) gl.deleteFramebuffer(slitScanFBO);
-            if (slitScanTexture) gl.deleteTexture(slitScanTexture);
-
-            slitScanTexture = createAndSetupTexture(width, height);
-            if (!slitScanTexture) {
-                showError("Failed to create slit scan texture.", true);
-                isSlitScanInitialized = false;
-                return false;
-            }
-
-            slitScanFBO = gl.createFramebuffer();
-            gl.bindFramebuffer(gl.FRAMEBUFFER, slitScanFBO);
-            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, slitScanTexture, 0);
-
-            const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-            if (status !== gl.FRAMEBUFFER_COMPLETE) {
-                showError(`Slit Scan FBO incomplete. Status: ${status}`, true);
-                gl.deleteFramebuffer(slitScanFBO);
-                gl.deleteTexture(slitScanTexture);
-                slitScanFBO = null;
-                slitScanTexture = null;
-                isSlitScanInitialized = false;
-                return false;
-            }
-
-            // Clear the texture initially to black (or a chosen background)
-            gl.clearColor(0.0, 0.0, 0.0, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null); // Unbind
-
-            console.log("Slit Scan FBO initialized and cleared.");
-            isSlitScanInitialized = true;
-            return true;
-        }
-
         function setupMainShaderAttributesUniforms() {
             gl.useProgram(shaderProgram);
             const pLoc = gl.getAttribLocation(shaderProgram, 'a_position');
@@ -1438,32 +1182,19 @@
                 'u_scanlineIntensity', 'u_scanlineDensity', 'u_curvatureAmount', 'u_phosphorOffset',
                 'u_vignetteStrength', 'u_vignetteSoftness',
                 'u_waveDensity', 'u_waveSpeed', 'u_waveAmplitude',
-                'u_fisheyeStrength',
-                'u_glitchStrength',
-                'u_kaleidoSegments', // Kaleidoscope uniform
-                'u_displacementStrength',
-                'u_refractionStrength',
-                'u_rippleFrequency',
-                'u_rippleSpeed',
-                'u_meltPoint0', 'u_meltPoint1', 'u_meltPoint2', 'u_meltPoint3', 'u_meltPoint4',
-                'u_meltStrength', 'u_meltSpread'
+                'u_kaleidoSegments', 'u_fisheyeStrength', 'u_glitchStrength',
+                // 'u_fisheyeStrength' // Duplicate removed
+                'u_displacement_map_strength', 'u_displacement_texture_feedback', 'u_resolution'
             ];
             
             /* @tweakable tolerance for missing uniforms in shaders */
             const optionalUniforms = [
-                'u_threshold',
-                'u_scanlineIntensity', 'u_scanlineDensity', 'u_curvatureAmount', 'u_phosphorOffset',
-                'u_vignetteStrength', 'u_vignetteSoftness',
+                'u_threshold', 'u_scanlineIntensity', 'u_scanlineDensity', 'u_curvatureAmount',
+                'u_phosphorOffset', 'u_vignetteStrength', 'u_vignetteSoftness',
                 'u_waveDensity', 'u_waveSpeed', 'u_waveAmplitude',
-                'u_fisheyeStrength',
-                'u_glitchStrength',
-                'u_kaleidoSegments', // Kaleidoscope uniform
-                'u_displacementStrength',
-                'u_refractionStrength',
-                'u_rippleFrequency',
-                'u_rippleSpeed',
-                'u_meltPoint0', 'u_meltPoint1', 'u_meltPoint2', 'u_meltPoint3', 'u_meltPoint4',
-                'u_meltStrength', 'u_meltSpread'
+                'u_kaleidoSegments', 'u_fisheyeStrength', 'u_glitchStrength',
+                // 'u_fisheyeStrength' // Duplicate removed
+                'u_displacement_map_strength', 'u_displacement_texture_feedback', 'u_resolution'
             ]; // Uniforms that are allowed to be missing
             
             let allRequiredOk = true;
@@ -1518,17 +1249,10 @@
             waveDensity: { precision: 1, isInt: false },
             waveSpeed: { precision: 2, isInt: false },
             waveAmplitude: { precision: 3, isInt: false },
-            fisheyeStrength: { precision: 2, isInt: false },
+            kaleidoSegments: { precision: 0, isInt: true },
             glitchStrength: { precision: 2, isInt: false },
-            displacementMapStrength: { precision: 3, isInt: false },
-            refractionStrength: { precision: 3, isInt: false },
-            rippleFrequency: { precision: 1, isInt: false },
-            rippleSpeed: { precision: 2, isInt: false },
-            slitScanSpeed: { precision: 4, isInt: false },
-            sliceThickness: { precision: 3, isInt: false },
-            sliceSamplePosition: { precision: 2, isInt: false },
-            meltStrength: { precision: 3, isInt: false },
-            meltSpread: { precision: 3, isInt: false },
+            fisheyeStrength: { precision: 2, isInt: false },
+            displacementMapStrength: { precision: 3, isInt: false, label: 'Displacement Strength'} // Feedback Displace
         };
         function updateControlValueFromSlider(controlName, newValue, precision, isInt) {
             const { range, number } = getControlElements(controlName); if (!range || !number) return; let valueToStore = newValue;
@@ -1548,250 +1272,86 @@
             updateControlValueFromSlider(name, controlValues[name], precision, isInt);
         }
         function drawScene(time) {
-            if (!gl || (!mediaReady && !isFrozen)) {
-                if (mediaReady === false && renderLoopId !== null) {
-                } else if (renderLoopId === null) {
-                    return;
-                }
-            }
+            if (!gl || !shaderProgram || !passthroughProgram || (!mediaReady && !isFrozen) || !frameHistoryTextures.length) return;
+            const sourceTextureUpdated = updateSourceTexture(); if (!sourceTextureUpdated && !isFrozen && controlValues.history <= 1) return;
+            let prevFrameTextureToBind;
+            if (isFrozen && frozenFrameTextures.length > 0) { let frozenIndex = (frameCount % frozenFrameTextures.length); prevFrameTextureToBind = frozenFrameTextures[frozenIndex];
+            } else { let historyLength = Math.max(1, Math.min(Math.round(controlValues.history), frameHistoryTextures.length)); let historyReadIndex = (historyWriteIndex - 1 - (frameCount % historyLength) + frameHistoryTextures.length) % frameHistoryTextures.length; prevFrameTextureToBind = frameHistoryTextures[historyReadIndex]; }
+            gl.bindFramebuffer(gl.FRAMEBUFFER, currentDestFBO); gl.viewport(0, 0, canvas.width, canvas.height); gl.useProgram(shaderProgram);
+            gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, webcamTexture); gl.uniform1i(shaderProgram.u_webcamTextureLoc, 0);
+            gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, prevFrameTextureToBind); gl.uniform1i(shaderProgram.u_previousFrameTextureLoc, 1);
+            const elapsedTime = (performance.now() - startTime) * 0.001;
 
-            const sourceTextureUpdated = updateSourceTexture();
-            if (!sourceTextureUpdated && !isFrozen && currentEffect !== 'slitscan') {
-                if (controlValues.history <= 1 || !frameHistoryTextures.length) {
-                     requestAnimationFrame(renderLoop); return;
+            // Note: Some uniforms (e.g., u_threshold) are only used by specific shaders. Their corresponding UI controls won't affect visuals if a shader that doesn't use them is active.
+            // Safe uniform setting helper function
+            /* @tweakable safely sets uniform value if the location exists */
+            function safeUniform1f(name, value) {
+                const location = shaderProgram[name + 'Loc'];
+                if (location !== null && location !== undefined) {
+                    gl.uniform1f(location, value);
                 }
             }
             
-            const elapsedTime = (performance.now() - startTime) * 0.001;
+            // Set all uniforms safely
+            safeUniform1f('u_time', elapsedTime);
+            safeUniform1f('u_motionThreshold', controlValues.motion);
+            safeUniform1f('u_trailPersistence', controlValues.trail);
+            safeUniform1f('u_hueShiftSpeed', controlValues.hue);
+            safeUniform1f('u_motionExtrapolation', controlValues.extrap);
 
-            if (currentEffect === 'slitscan') {
-                if (!isSlitScanInitialized || !slitScanProgram || !slitScanFBO || !webcamTexture || !sourceTextureUpdated) {
-                    // Fallback or error if slit scan isn't ready or webcam texture failed to update
-                    // Draw passthrough of webcam directly to canvas to avoid black screen
-                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-                    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-                    gl.useProgram(passthroughProgram);
-                    gl.activeTexture(gl.TEXTURE0);
-                    gl.bindTexture(gl.TEXTURE_2D, webcamTexture ? webcamTexture : (fbTexture1 ? fbTexture1 : canvas) ); // Show live webcam or a fallback
-                    gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
+            let currentIntensity = controlValues.intensity; // Base intensity from UI
+            if (audioReactiveEnabled && isAudioSetup) {
+                currentIntensity = Math.min(1.0, controlValues.intensity + smoothedVolume * 0.75);
+            }
+            safeUniform1f('u_intensity', currentIntensity);
+            safeUniform1f('u_displacement', controlValues.displacement);
+            safeUniform1f('u_feedback', controlValues.feedback);
+            safeUniform1f('u_threshold', controlValues.threshold);
+            safeUniform1f('u_brightness', controlValues.brightness);
+            safeUniform1f('u_contrast', controlValues.contrast);
+            safeUniform1f('u_saturation', controlValues.saturation);
+            safeUniform1f('u_scanlineIntensity', controlValues.scanlineIntensity);
+            safeUniform1f('u_scanlineDensity', controlValues.scanlineDensity);
+            safeUniform1f('u_curvatureAmount', controlValues.curvatureAmount);
+            safeUniform1f('u_phosphorOffset', controlValues.phosphorOffset);
+            safeUniform1f('u_vignetteStrength', controlValues.vignetteStrength);
+            safeUniform1f('u_vignetteSoftness', controlValues.vignetteSoftness);
+            safeUniform1f('u_waveDensity', controlValues.waveDensity);
+            safeUniform1f('u_waveSpeed', controlValues.waveSpeed);
+            safeUniform1f('u_waveAmplitude', controlValues.waveAmplitude);
+            safeUniform1f('u_kaleidoSegments', controlValues.kaleidoSegments);
+            safeUniform1f('u_fisheyeStrength', controlValues.fisheyeStrength);
+            safeUniform1f('u_glitchStrength', controlValues.glitchStrength);
+            safeUniform1f('u_displacement_map_strength', controlValues.displacementMapStrength);
 
-                    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-                    gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0);
-                    gl.enableVertexAttribArray(passthroughProgram.aPosLoc);
-                    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-                    gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0);
-                    gl.enableVertexAttribArray(passthroughProgram.aTexLoc);
-                    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-                    gl.clear(gl.COLOR_BUFFER_BIT);
-                    gl.drawArrays(gl.TRIANGLES, 0, 6);
-                    // requestAnimationFrame(renderLoop); // Keep main loop going - will be called at the end
-                    // return; // Skip rest of slit-scan logic for this frame
+            // For feedbackDisplaceShader, u_displacement_texture_feedback should sample from the same texture as u_previousFrameTexture (TEXTURE1)
+            const displacementTextureFeedbackLoc = shaderProgram['u_displacement_texture_feedbackLoc'];
+            if (displacementTextureFeedbackLoc !== null && displacementTextureFeedbackLoc !== undefined) {
+                 gl.uniform1i(displacementTextureFeedbackLoc, 1); // TEXTURE1 is u_previousFrameTexture
+            }
+
+            const resolutionLoc = shaderProgram['u_resolutionLoc'];
+            if (resolutionLoc !== null && resolutionLoc !== undefined) {
+                if (canvas && typeof canvas.width === 'number' && typeof canvas.height === 'number') {
+                    gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
                 } else {
-
-                    // --- Slit Scan Logic ---
-                    scanPosition = fract(scanPosition + slitScanSpeed);
-
-                    gl.enable(gl.SCISSOR_TEST);
-                    let scissorX, scissorY, scissorWidth, scissorHeight;
-                    const physicalSliceThickness = Math.max(1, Math.floor(sliceThickness * (scanDirection === 0 ? gl.drawingBufferWidth : gl.drawingBufferHeight)));
-
-                    if (scanDirection === 0) { // Vertical slit, scans horizontally
-                        scissorX = Math.floor(scanPosition * (gl.drawingBufferWidth - physicalSliceThickness));
-                        scissorY = 0;
-                        scissorWidth = physicalSliceThickness;
-                        scissorHeight = gl.drawingBufferHeight;
-                    } else { // Horizontal slit, scans vertically
-                        scissorX = 0;
-                        scissorY = Math.floor(scanPosition * (gl.drawingBufferHeight - physicalSliceThickness));
-                        scissorWidth = gl.drawingBufferWidth;
-                        scissorHeight = physicalSliceThickness;
-                    }
-                    gl.scissor(scissorX, scissorY, scissorWidth, scissorHeight);
-
-                    gl.bindFramebuffer(gl.FRAMEBUFFER, slitScanFBO);
-                    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-                    gl.useProgram(slitScanProgram);
-
-                    // Cache uniform locations if not already done (basic caching)
-                    if (!slitScanProgram.uWebcamTexLocS) slitScanProgram.uWebcamTexLocS = gl.getUniformLocation(slitScanProgram, 'u_webcamTexture');
-                    if (!slitScanProgram.uSliceSamplePosLoc) slitScanProgram.uSliceSamplePosLoc = gl.getUniformLocation(slitScanProgram, 'u_sliceSamplePosition');
-                    if (!slitScanProgram.uScanDirLocS) slitScanProgram.uScanDirLocS = gl.getUniformLocation(slitScanProgram, 'u_scanDirection');
-                    if (!slitScanProgram.aPosLocS) slitScanProgram.aPosLocS = gl.getAttribLocation(slitScanProgram, 'a_position');
-                    if (!slitScanProgram.aTexLocS) slitScanProgram.aTexLocS = gl.getAttribLocation(slitScanProgram, 'a_texCoord');
-
-                    gl.activeTexture(gl.TEXTURE0);
-                    gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
-                    gl.uniform1i(slitScanProgram.uWebcamTexLocS, 0);
-
-                    gl.uniform1f(slitScanProgram.uSliceSamplePosLoc, sliceSamplePosition);
-                    gl.uniform1f(slitScanProgram.uScanDirLocS, parseFloat(scanDirection));
-
-                    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-                    gl.vertexAttribPointer(slitScanProgram.aPosLocS, 2, gl.FLOAT, false, 0, 0);
-                    gl.enableVertexAttribArray(slitScanProgram.aPosLocS);
-                    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-                    gl.vertexAttribPointer(slitScanProgram.aTexLocS, 2, gl.FLOAT, false, 0, 0);
-                    gl.enableVertexAttribArray(slitScanProgram.aTexLocS);
-
-                    gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-                    gl.disable(gl.SCISSOR_TEST);
-
-                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-                    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-                    gl.useProgram(passthroughProgram);
-                    gl.activeTexture(gl.TEXTURE0);
-                    gl.bindTexture(gl.TEXTURE_2D, slitScanTexture);
-                    gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
-
-                    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-                    gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0);
-                    gl.enableVertexAttribArray(passthroughProgram.aPosLoc);
-                    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-                    gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0);
-                    gl.enableVertexAttribArray(passthroughProgram.aTexLoc);
-
-                    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-                    gl.clear(gl.COLOR_BUFFER_BIT);
-                    gl.drawArrays(gl.TRIANGLES, 0, 6);
-                }
-
-            } else {
-                let prevFrameTextureToBind;
-                if (isFrozen && frozenFrameTextures.length > 0) {
-                    let frozenIndex = (frameCount % frozenFrameTextures.length);
-                    prevFrameTextureToBind = frozenFrameTextures[frozenIndex];
-                } else {
-                    let historyLength = Math.max(1, Math.min(Math.round(controlValues.history), frameHistoryTextures.length));
-                    if (historyLength === 0 && frameHistoryTextures.length > 0) historyLength = 1;
-                    else if (frameHistoryTextures.length === 0) { requestAnimationFrame(renderLoop); return; }
-
-                    let historyReadIndex = (historyWriteIndex - 1 - (frameCount % historyLength) + frameHistoryTextures.length) % frameHistoryTextures.length;
-                    prevFrameTextureToBind = frameHistoryTextures[historyReadIndex];
-                }
-
-                gl.bindFramebuffer(gl.FRAMEBUFFER, currentDestFBO);
-                gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-                gl.useProgram(shaderProgram);
-
-                gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
-                gl.uniform1i(shaderProgram.u_webcamTextureLoc, 0);
-
-                gl.activeTexture(gl.TEXTURE1);
-                gl.bindTexture(gl.TEXTURE_2D, prevFrameTextureToBind);
-                gl.uniform1i(shaderProgram.u_previousFrameTextureLoc, 1);
-
-                function safeUniform1f(name, value) { // Defined locally as it's used by this path
-                    const location = shaderProgram[name + 'Loc'];
-                    if (location !== null && location !== undefined) {
-                        gl.uniform1f(location, value);
-                    }
-                }
-
-                // It's important to remember that some uniforms (e.g., u_threshold) are only
-                // utilized by specific shaders. Consequently, their associated UI controls
-                // will not influence the visual output if the currently active shader
-                // does not make use of these particular uniforms.
-                safeUniform1f('u_time', elapsedTime);
-                safeUniform1f('u_motionThreshold', controlValues.motion);
-                safeUniform1f('u_trailPersistence', controlValues.trail);
-                safeUniform1f('u_hueShiftSpeed', controlValues.hue);
-                safeUniform1f('u_motionExtrapolation', controlValues.extrap);
-
-                let currentIntensityVal = controlValues.intensity; // Renamed to avoid conflict
-                if (audioReactiveEnabled && isAudioSetup) {
-                    currentIntensityVal = Math.min(1.0, controlValues.intensity + smoothedVolume * 0.75);
-                }
-                safeUniform1f('u_intensity', currentIntensityVal);
-
-                safeUniform1f('u_displacement', controlValues.displacement);
-                safeUniform1f('u_feedback', controlValues.feedback);
-                safeUniform1f('u_threshold', controlValues.threshold);
-                safeUniform1f('u_brightness', controlValues.brightness);
-                safeUniform1f('u_contrast', controlValues.contrast);
-                safeUniform1f('u_saturation', controlValues.saturation);
-                safeUniform1f('u_scanlineIntensity', controlValues.scanlineIntensity);
-                safeUniform1f('u_scanlineDensity', controlValues.scanlineDensity);
-                safeUniform1f('u_curvatureAmount', controlValues.curvatureAmount);
-                safeUniform1f('u_phosphorOffset', controlValues.phosphorOffset);
-                safeUniform1f('u_vignetteStrength', controlValues.vignetteStrength);
-                safeUniform1f('u_vignetteSoftness', controlValues.vignetteSoftness);
-                safeUniform1f('u_waveDensity', controlValues.waveDensity);
-                safeUniform1f('u_waveSpeed', controlValues.waveSpeed);
-                safeUniform1f('u_waveAmplitude', controlValues.waveAmplitude);
-                safeUniform1f('u_kaleidoSegments', controlValues.kaleidoSegments);
-                safeUniform1f('u_fisheyeStrength', controlValues.fisheyeStrength);
-                safeUniform1f('u_glitchStrength', controlValues.glitchStrength);
-                safeUniform1f('u_displacementStrength', controlValues.displacementMapStrength);
-                safeUniform1f('u_refractionStrength', controlValues.refractionStrength);
-                safeUniform1f('u_rippleFrequency', controlValues.rippleFrequency);
-                safeUniform1f('u_rippleSpeed', controlValues.rippleSpeed);
-
-                if (currentEffect === 'facemelt') { // 'facemelt' will be the key for this effect
-                    if (meltSourcePoints && meltSourcePoints.length === NUM_MELT_POINTS) {
-                        for (let i = 0; i < NUM_MELT_POINTS; i++) {
-                            const point = meltSourcePoints[i];
-                            const loc = shaderProgram['u_meltPoint' + i + 'Loc']; // Location should be cached by setupMainShaderAttributesUniforms
-                            if (loc !== null && loc !== undefined && point) {
-                                gl.uniform2f(loc, point.x, point.y);
-                            }
-                        }
-                    }
-                    // meltStrength and meltSpread will be new controlValues
-                    safeUniform1f('u_meltStrength', controlValues.meltStrength || 0.0);
-                    safeUniform1f('u_meltSpread', controlValues.meltSpread || 0.0);
-                }
-
-                // Attribute setup for main shaderProgram should be done once in changeEffect or setupMainShaderAttributesUniforms
-                // For now, assuming pLoc and tLoc are available on shaderProgram or fetched if needed.
-                // Re-using the existing logic which implies they are fetched/set during setupMainShaderAttributesUniforms
-                // which is called by changeEffect.
-                gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-                if (!isFrozen) {
-                    copyTexture(currentDestTexture, frameHistoryTextures[historyWriteIndex]);
-                    historyWriteIndex = (historyWriteIndex + 1) % frameHistoryTextures.length;
-                }
-
-                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-                gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-                gl.useProgram(passthroughProgram);
-                gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, currentDestTexture);
-                gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
-
-                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-                gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0);
-                gl.enableVertexAttribArray(passthroughProgram.aPosLoc);
-                gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-                gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0);
-                gl.enableVertexAttribArray(passthroughProgram.aTexLoc);
-
-                gl.clearColor(0.0, 0.0, 0.0, 1.0);
-                gl.clear(gl.COLOR_BUFFER_BIT);
-                gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-                if (!isFrozen) {
-                    let tempFBO = currentSourceFBO; currentSourceFBO = currentDestFBO; currentDestFBO = tempFBO;
-                    let tempTex = currentSourceTexture; currentSourceTexture = currentDestTexture; currentDestTexture = tempTex;
+                    gl.uniform2f(resolutionLoc, 640.0, 480.0); // Fallback resolution
                 }
             }
 
-            if (faceTrackingEnabled && detectedFaces && detectedFaces.length > 0) {
-                // 'canvas' is the global variable for the main output canvas element
-                if (canvas) {
-                    // gl.finish(); // Optional: ensure GL is done. Usually not needed and can hinder performance.
-                    drawFaceLandmarksDebug(canvas, detectedFaces);
-                }
-            }
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-            const err = gl.getError(); if (err !== gl.NO_ERROR) { console.error("WebGL Error:", err); }
-            frameCount++;
-            renderLoopId = requestAnimationFrame(renderLoop);
+            if (!isFrozen) { copyTexture(currentDestTexture, frameHistoryTextures[historyWriteIndex]); historyWriteIndex = (historyWriteIndex + 1) % frameHistoryTextures.length; }
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight); gl.useProgram(passthroughProgram);
+            gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, currentDestTexture); gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
+            gl.enableVertexAttribArray(passthroughProgram.aPosLoc); gl.enableVertexAttribArray(passthroughProgram.aTexLoc);
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer); gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0);
+            gl.clearColor(0.0, 0.0, 0.0, 1.0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLES, 0, 6);
+            if (!isFrozen) { let tempFBO = currentSourceFBO; currentSourceFBO = currentDestFBO; currentDestFBO = tempFBO; let tempTex = currentSourceTexture; currentSourceTexture = currentDestTexture; currentDestTexture = tempTex; }
+            const err = gl.getError(); if (err !== gl.NO_ERROR) { } frameCount++;
         }
-        // function renderLoop(now) { drawScene(now); renderLoopId = requestAnimationFrame(renderLoop); } // This line was duplicated
+        function renderLoop(now) { drawScene(now); renderLoopId = requestAnimationFrame(renderLoop); }
         function startRecording() {
             if (!canvas || typeof canvas.captureStream !== 'function') { showError("Recording Error: canvas.captureStream not supported.", false); return; }
             if (typeof MediaRecorder !== 'function') { showError("Recording Error: MediaRecorder not supported.", false); return; }
@@ -1842,200 +1402,6 @@
             }
         }
         
-        function processAudioFrame() {
-            if (!isAudioSetup || !analyserNode || !audioDataArray) {
-                // console.warn("Audio not ready for processing.");
-                // requestAnimationFrame(processAudioFrame); // Keep trying or stop if not setup?
-                return; // Stop if not setup, setupAudio will restart it if/when ready
-            }
-
-            if (!audioReactiveEnabled) {
-                smoothedVolume = 0.0; // Reset volume if reactivity is turned off
-                // No need to request another frame if disabled, the enable action will restart it.
-                return;
-            }
-
-            // Get audio data
-            // Using byte frequency data for simplicity in RMS calculation here
-            analyserNode.getByteFrequencyData(audioDataArray);
-            // Or, if using time domain: analyserNode.getFloatTimeDomainData(audioDataArray);
-
-            let sumOfSquares = 0;
-            for (let i = 0; i < audioDataArray.length; i++) {
-                // For frequency data, values are 0-255. Normalize to 0-1.
-                const normalizedValue = audioDataArray[i] / 255.0;
-                sumOfSquares += normalizedValue * normalizedValue;
-            }
-            const rms = Math.sqrt(sumOfSquares / audioDataArray.length);
-
-            // Apply smoothing (Exponential Moving Average)
-            // Adjust smoothingFactor: lower means more smoothing, higher means more responsive.
-            const smoothingFactor = 0.1;
-            smoothedVolume = rms * smoothingFactor + smoothedVolume * (1.0 - smoothingFactor);
-
-            // Clamping smoothedVolume to be safe, though RMS of normalized values should be <= 1
-            smoothedVolume = Math.min(1.0, Math.max(0.0, smoothedVolume));
-
-            // For debugging:
-            // console.log("Smoothed Volume:", smoothedVolume);
-
-            // Keep the loop going if audio reactivity is enabled
-            if (audioReactiveEnabled) {
-                requestAnimationFrame(processAudioFrame);
-            }
-        }
-
-        async function setupAudio() {
-            if (isAudioSetup) return true; // Already setup
-
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                showError("Audio Reactivity Error: getUserMedia not supported.", false);
-                return false;
-            }
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-                const source = audioContext.createMediaStreamSource(stream);
-                analyserNode = audioContext.createAnalyser();
-                analyserNode.fftSize = 256; // Or 512. Smaller is faster, less detailed.
-                // analyserNode.smoothingTimeConstant = 0.8; // Optional smoothing on analyser itself
-
-                source.connect(analyserNode);
-                // Do not connect analyserNode to destination, we only need to analyze.
-
-                audioDataArray = new Uint8Array(analyserNode.frequencyBinCount); // For frequency data
-                // OR use Float32Array for time domain data if preferred for RMS volume calculation
-                // audioDataArray = new Float32Array(analyserNode.fftSize);
-
-
-                isAudioSetup = true;
-                console.log("Audio setup complete.");
-
-                // Start the audio processing loop.
-                // processAudioFrame will check audioReactiveEnabled internally.
-                requestAnimationFrame(processAudioFrame);
-                return true;
-
-            } catch (err) {
-                showError(`Audio Reactivity Error: ${err.name} - ${err.message}. Check microphone permissions.`, false);
-                isAudioSetup = false;
-                return false;
-            }
-        }
-
-    async function detectFaceLandmarksLoop() {
-        if (!isFaceModelReady || !faceLandmarkModel || !faceTrackingEnabled || !mediaReady) {
-            // console.log("Conditions not met for face detection, skipping frame.");
-            // If tracking is enabled but model/media isn't ready, keep trying.
-            if (faceTrackingEnabled) {
-                requestAnimationFrame(detectFaceLandmarksLoop);
-            }
-            return;
-        }
-
-        const videoElement = document.getElementById('webcamVideo'); // Existing video element
-        if (!videoElement || videoElement.readyState < videoElement.HAVE_ENOUGH_DATA) {
-            // console.log("Video element not ready for face detection.");
-            if (faceTrackingEnabled) {
-                requestAnimationFrame(detectFaceLandmarksLoop);
-            }
-            return;
-        }
-
-        try {
-            const estimationConfig = { flipHorizontal: false };
-            // Our webcam feed is displayed mirrored (texCoord.x = 1.0 - texCoord.x).
-            // If the face model expects a non-mirrored image, and our videoElement provides that,
-            // then flipHorizontal: false is correct.
-            // If videoElement itself is mirrored, this might need adjustment.
-            // Let's assume videoElement provides a "natural" view and shaders do the display mirroring.
-            // Most TFJS models expect non-mirrored input.
-
-            const faces = await faceLandmarkModel.estimateFaces(videoElement, estimationConfig);
-            detectedFaces = faces; // Store the latest detections
-
-            if (faces.length > 0 && faces[0].keypoints) {
-                const keypoints = faces[0].keypoints; // Assuming maxFaces = 1 for now
-
-                // Define which landmark indices we want
-                const landmarkIndices = [
-                    175, // Chin
-                    132, // Viewer's Left Jaw/Cheek
-                    213, // Viewer's Left Lower Cheek
-                    361, // Viewer's Right Jaw/Cheek
-                    433  // Viewer's Right Lower Cheek
-                ];
-
-                let newMeltPoints = [];
-                for (let i = 0; i < Math.min(landmarkIndices.length, NUM_MELT_POINTS); i++) {
-                    const index = landmarkIndices[i];
-                    if (keypoints[index]) {
-                        // Landmarks from model are (0-1, 0-1) where X is left-to-right on raw video.
-                        // Shaders usually mirror webcam (1.0 - uv.x). So, flip X for shader.
-                        newMeltPoints.push({
-                            x: 1.0 - keypoints[index].x, // Flip X for shader's mirrored space
-                            y: keypoints[index].y
-                            // z: keypoints[index].z // z is also available if needed later
-                        });
-                    } else {
-                        // Add a default off-screen point if a landmark is missing, to avoid errors
-                        newMeltPoints.push({ x: -1.0, y: -1.0 });
-                    }
-                }
-                // Ensure meltSourcePoints always has NUM_MELT_POINTS, even if fewer are found/defined
-                while (newMeltPoints.length < NUM_MELT_POINTS) {
-                    newMeltPoints.push({ x: -1.0, y: -1.0 }); // Pad with off-screen points
-                }
-                meltSourcePoints = newMeltPoints.slice(0, NUM_MELT_POINTS); // Ensure correct length
-
-            } else {
-                // No faces detected, provide default off-screen points for the shader
-                let defaultPoints = [];
-                for (let i = 0; i < NUM_MELT_POINTS; i++) {
-                    defaultPoints.push({ x: -1.0, y: -1.0 });
-                }
-                meltSourcePoints = defaultPoints;
-            }
-
-        } catch (error) {
-            console.error("Error during face landmark detection:", error);
-            // Potentially stop the loop or show an error to the user if errors persist
-            // For now, just log it and continue trying.
-        }
-
-        // Continue the loop if still enabled
-        if (faceTrackingEnabled) {
-            requestAnimationFrame(detectFaceLandmarksLoop);
-        }
-    }
-
-    function drawFaceLandmarksDebug(canvasElement, faces) { // Changed first param name for clarity
-        if (!canvasElement || !faces || faces.length === 0) return;
-
-        const ctx = canvasElement.getContext('2d');
-        if (!ctx) return;
-
-        ctx.save();
-
-        faces.forEach(face => {
-            if (face.keypoints) {
-                face.keypoints.forEach(keypoint => {
-                    // Flip x-coordinate for drawing on the mirrored canvas
-                    const x = (1.0 - keypoint.x) * canvasElement.width;
-                    const y = keypoint.y * canvasElement.height;
-
-                    ctx.beginPath();
-                    ctx.arc(x, y, 2, 0, 2 * Math.PI); // Draw a small circle (radius 2)
-                    ctx.fillStyle = 'rgba(0, 255, 0, 0.7)'; // Green dots
-                    ctx.fill();
-                });
-            }
-        });
-        ctx.restore();
-    }
-
         // Function to apply a preset
         function applyPreset(presetName) {
             if (!presets[presetName]) return;
@@ -2054,8 +1420,6 @@
         // Function to change the current effect/shader
         function changeEffect(effectName) {
             if (!shaderSources[effectName]) return;
-
-            const previousEffect = currentEffect; // Store the effect we are switching from
             
             const fsSource = shaderSources[effectName];
             
@@ -2075,38 +1439,9 @@
                 return;
             }
             
-            // if (!setupMainShaderAttributesUniforms()) { ... } // This is called after currentEffect is set
+            currentEffect = effectName;
 
-            // currentEffect = effectName; // Update currentEffect *after* potential cleanup
-            // console.log(`Changed effect to: ${effectName}`); // Moved further down
-
-            // Cleanup for Slit Scan if we are switching *away* from it
-            if (previousEffect === 'slitscan' && effectName !== 'slitscan') {
-                if (slitScanFBO) {
-                    gl.deleteFramebuffer(slitScanFBO);
-                    slitScanFBO = null;
-                    console.log("Slit Scan FBO deleted.");
-                }
-                if (slitScanTexture) {
-                    gl.deleteTexture(slitScanTexture);
-                    slitScanTexture = null;
-                    console.log("Slit Scan Texture deleted.");
-                }
-                isSlitScanInitialized = false;
-            }
-
-            currentEffect = effectName; // Set the new currentEffect
-
-            if (!setupMainShaderAttributesUniforms()) { // Now setup uniforms for the NEW currentEffect
-                showError(`Failed to setup uniforms for ${effectName}`);
-                // Revert to previous effect if setup fails for the new one?
-                // For now, this matches existing logic.
-                return;
-            }
-            console.log(`Changed effect to: ${effectName}`);
-
-
-            // Update visible controls based on the new effect's relevance
+            // --- Start of Dynamic UI update logic ---
             const effectsTab = document.getElementById('effects-tab');
             if (effectsTab) {
                 const allEffectControls = effectsTab.querySelectorAll('div.control-group[data-control-key]');
@@ -2115,7 +1450,7 @@
                 allEffectControls.forEach(controlDiv => {
                     const controlKey = controlDiv.dataset.controlKey;
                     if (relevantKeys.includes(controlKey)) {
-                        controlDiv.style.display = ''; // Revert to CSS default (flex)
+                        controlDiv.style.display = ''; // Revert to default CSS (flex)
                     } else {
                         controlDiv.style.display = 'none';
                     }
@@ -2126,17 +1461,8 @@
             if (effectTitleElement) {
                 effectTitleElement.textContent = effectName ? `${effectName} Controls` : 'Effect Controls';
             }
-
-            if (effectName === 'slitscan') {
-                // Always re-initialize (which includes clearing) when slitscan is selected.
-                // This ensures it's fresh and matches current canvas dimensions.
-                if (!initSlitScanFramebuffer(canvas.width, canvas.height)) {
-                    showError("Failed to initialize Slit Scan FBO. Effect may not work.", false);
-                } else {
-                    scanPosition = 0.0;
-                    console.log("Slit Scan activated and scan position reset.");
-                }
-            }
+            // --- End of Dynamic UI update logic ---
+            console.log(`Changed effect to: ${effectName}`);
         }
         
         async function setupMediaSource(sourceType, sourceDetail = {}) {
@@ -2249,11 +1575,9 @@
             // Initialize with the datamosh shader by default
             shaderProgram = createShaderProgram(vsSource, datamoshShader);
             passthroughProgram = createShaderProgram(vsSource, fsPassthroughSource);
-            slitScanProgram = createShaderProgram(vsSource, drawSliceShaderSource);
             
-            if (!shaderProgram || !passthroughProgram || !slitScanProgram) { showError("Shader Program Creation Failed.", true); return; }
+            if (!shaderProgram || !passthroughProgram) { showError("Shader Program Creation Failed.", true); return; }
             if (!setupMainShaderAttributesUniforms() || !setupPassthroughShaderAttributesUniforms()) { showError("Shader Setup Failed.", true); return; }
-            // Uniform locations for slitScanProgram will be fetched when it's used.
             
             // Setup all controls
             Object.keys(controlConfig).forEach(name => {
@@ -2291,10 +1615,7 @@
                 applyPreset(presetSelector.value);
             });
             
-            // When changing effects, different shaders are loaded.
-            // This means that some UI controls in the 'Effects' tab (e.g., 'Threshold')
-            // might not be relevant for all selected effects, as their corresponding
-            // uniforms might not be used by the newly selected shader.
+            // Changing effects will load different shaders. Some UI controls in the 'Effects' tab (e.g., 'Threshold') might not be relevant for all selected effects.
             effectSelector.addEventListener('change', () => {
                 changeEffect(effectSelector.value);
             });
@@ -2332,105 +1653,9 @@
             
             await setupMediaSource('webcam', { facingMode: currentFacingMode });
 
-            // Ensure initial UI state for controls is set based on the default effect
-            if (effectSelector) {
-                changeEffect(effectSelector.value);
-            }
-
-            // Slit Scan Speed
-            const slitScanSpeedRange = document.getElementById('slitScanSpeedRange');
-            const slitScanSpeedNumber = document.getElementById('slitScanSpeedNumber');
-            if (slitScanSpeedRange && slitScanSpeedNumber) {
-                slitScanSpeedRange.addEventListener('input', () => {
-                    controlValues.slitScanSpeed = parseFloat(slitScanSpeedRange.value);
-                    slitScanSpeedNumber.value = controlValues.slitScanSpeed.toFixed(4);
-                    slitScanSpeed = controlValues.slitScanSpeed; // Update global
-                });
-                slitScanSpeedNumber.addEventListener('input', () => {
-                    controlValues.slitScanSpeed = parseFloat(slitScanSpeedNumber.value);
-                    // slitScanSpeedRange.value = controlValues.slitScanSpeed; // This might conflict
-                    slitScanSpeed = controlValues.slitScanSpeed; // Update global
-                });
-                // Initialize
-                controlValues.slitScanSpeed = parseFloat(slitScanSpeedRange.value);
-                slitScanSpeedNumber.value = controlValues.slitScanSpeed.toFixed(4);
-                slitScanSpeed = controlValues.slitScanSpeed;
-            }
-
-            // Slice Thickness
-            const sliceThicknessRange = document.getElementById('sliceThicknessRange');
-            const sliceThicknessNumber = document.getElementById('sliceThicknessNumber');
-            if (sliceThicknessRange && sliceThicknessNumber) {
-                sliceThicknessRange.addEventListener('input', () => {
-                    controlValues.sliceThickness = parseFloat(sliceThicknessRange.value);
-                    sliceThicknessNumber.value = controlValues.sliceThickness.toFixed(3);
-                    sliceThickness = controlValues.sliceThickness; // Update global
-                });
-                sliceThicknessNumber.addEventListener('input', () => {
-                    controlValues.sliceThickness = parseFloat(sliceThicknessNumber.value);
-                    sliceThickness = controlValues.sliceThickness; // Update global
-                });
-                controlValues.sliceThickness = parseFloat(sliceThicknessRange.value);
-                sliceThicknessNumber.value = controlValues.sliceThickness.toFixed(3);
-                sliceThickness = controlValues.sliceThickness;
-            }
-
-            // Slice Sample Position
-            const sliceSamplePositionRange = document.getElementById('sliceSamplePositionRange');
-            const sliceSamplePositionNumber = document.getElementById('sliceSamplePositionNumber');
-            if (sliceSamplePositionRange && sliceSamplePositionNumber) {
-                sliceSamplePositionRange.addEventListener('input', () => {
-                    controlValues.sliceSamplePosition = parseFloat(sliceSamplePositionRange.value);
-                    sliceSamplePositionNumber.value = controlValues.sliceSamplePosition.toFixed(2);
-                    sliceSamplePosition = controlValues.sliceSamplePosition; // Update global
-                });
-                sliceSamplePositionNumber.addEventListener('input', () => {
-                    controlValues.sliceSamplePosition = parseFloat(sliceSamplePositionNumber.value);
-                    sliceSamplePosition = controlValues.sliceSamplePosition; // Update global
-                });
-                controlValues.sliceSamplePosition = parseFloat(sliceSamplePositionRange.value);
-                sliceSamplePositionNumber.value = controlValues.sliceSamplePosition.toFixed(2);
-                sliceSamplePosition = controlValues.sliceSamplePosition;
-            }
-
-            // Scan Direction
-            const scanDirectionSelect = document.getElementById('scanDirectionSelect');
-            if (scanDirectionSelect) {
-                scanDirectionSelect.value = scanDirection.toString(); // Initialize from global
-                scanDirectionSelect.addEventListener('change', () => {
-                    scanDirection = parseInt(scanDirectionSelect.value, 10); // Update global
-                    if (currentEffect === 'slitscan' && isSlitScanInitialized && slitScanFBO) {
-                        gl.bindFramebuffer(gl.FRAMEBUFFER, slitScanFBO);
-                        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-                        gl.clear(gl.COLOR_BUFFER_BIT);
-                        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-                        scanPosition = 0.0;
-                        console.log("Slit Scan cleared due to direction change.");
-                    }
-                });
-            }
-
-            // Reset Slit Scan Button
-            const resetSlitScanButton = document.getElementById('resetSlitScanButton');
-            if (resetSlitScanButton) {
-                resetSlitScanButton.addEventListener('click', () => {
-                    if (currentEffect === 'slitscan' && isSlitScanInitialized && slitScanFBO) {
-                        gl.bindFramebuffer(gl.FRAMEBUFFER, slitScanFBO);
-                        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-                        gl.clear(gl.COLOR_BUFFER_BIT);
-                        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-                        scanPosition = 0.0;
-                        console.log("Slit Scan accumulation cleared by user.");
-                    } else if (currentEffect === 'slitscan') {
-                        console.warn("Attempted to reset slit scan, but not fully initialized.");
-                    }
-                });
-            }
-
             const audioReactiveCheckbox = document.getElementById('audioReactiveCheckbox');
             if (audioReactiveCheckbox) {
                 audioReactiveCheckbox.checked = audioReactiveEnabled;
-
                 audioReactiveCheckbox.addEventListener('change', async () => {
                     audioReactiveEnabled = audioReactiveCheckbox.checked;
                     if (audioReactiveEnabled) {
@@ -2442,7 +1667,7 @@
                                 showError("Failed to initialize audio. Reactivity disabled.", false);
                             }
                         } else {
-                            requestAnimationFrame(processAudioFrame);
+                            requestAnimationFrame(processAudioFrame); // Ensure loop is running
                         }
                     } else {
                         console.log("Audio reactivity disabled.");
@@ -2450,39 +1675,8 @@
                 });
             }
 
-            const faceTrackingCheckbox = document.getElementById('faceTrackingCheckbox');
-
-            if (faceTrackingCheckbox) {
-                // Initialize checkbox state from the global variable (default false)
-                faceTrackingCheckbox.checked = faceTrackingEnabled;
-
-                faceTrackingCheckbox.addEventListener('change', async () => {
-                    const isEnabled = faceTrackingCheckbox.checked;
-                    faceTrackingEnabled = isEnabled; // Update global state
-
-                    if (isEnabled) {
-                        console.log("Face Tracking enabled by user.");
-                        if (!isFaceModelReady) {
-                            showError("Loading face model, please wait...", false); // Inform user
-                            const modelLoaded = await loadFaceLandmarkDetectionModel();
-                            if (modelLoaded) {
-                                // Model is ready, and tracking is enabled, start the loop
-                                requestAnimationFrame(detectFaceLandmarksLoop);
-                            } else {
-                                // Model loading failed, uncheck the box and update enabled status
-                                showError("Face model failed to load. Tracking disabled.", false);
-                                faceTrackingCheckbox.checked = false;
-                                faceTrackingEnabled = false;
-                            }
-                        } else {
-                            // Model was already ready, just ensure the loop starts
-                            requestAnimationFrame(detectFaceLandmarksLoop);
-                        }
-                    } else {
-                        console.log("Face Tracking disabled by user.");
-                        detectedFaces = []; // Clear last detected faces so debug draw stops
-                    }
-                });
+            if (effectSelector) { // Ensure effectSelector is available
+                changeEffect(effectSelector.value); // Set initial UI state for controls
             }
         }
         
