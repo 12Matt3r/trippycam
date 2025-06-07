@@ -48,7 +48,6 @@ This project is a single-page web application that applies real-time glitch art 
 -   CSS3
 -   JavaScript
 -   WebGL (for real-time graphics rendering and effects)
--   [qrcode.js](https://github.com/davidshimjs/qrcodejs) (though its usage is not immediately apparent in the main functionality described)
 
 ## Contributing
 
