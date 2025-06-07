@@ -166,6 +166,7 @@
             </div>
             
             <div id="effects-tab" class="tab-content">
+                <span id="currentEffectTitle" class="section-title" style="text-transform: capitalize; margin-bottom: 10px;">Effect Controls</span>
                 <div class="control-group">
                     <label for="effectSelector">Effect:</label>
                     <select id="effectSelector">
@@ -173,13 +174,97 @@
                         <option value="pixelsort">Pixel Sort</option>
                         <option value="feedback">Feedback</option>
                         <option value="colorshift">Color Shift</option>
+                        <option value="crt">CRT Effect</option>
+                        <option value="mirror">Horizontal Mirror</option>
+                        <option value="wavewarp">Wave Warp</option>
+                        <option value="kaleidoscope">Kaleidoscope</option>
+                        <option value="noiseGlitch">Noise Glitch</option>
+                        <option value="fisheye">Fisheye Distortion</option>
+                        <option value="feedbackDisplace">Feedback Displace</option>
                     </select>
                 </div>
                 
-                <div class="control-group"> <label for="intensityRange">Intensity:</label> <input type="range" id="intensityRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="intensityNumber" step="0.01" value="0.5"> </div>
-                <div class="control-group"> <label for="displacementRange">Displace:</label> <input type="range" id="displacementRange" min="0.0" max="0.1" step="0.001" value="0.01"> <input type="number" id="displacementNumber" step="0.001" value="0.01"> </div>
-                <div class="control-group"> <label for="feedbackRange">Feedback:</label> <input type="range" id="feedbackRange" min="0.0" max="0.95" step="0.01" value="0.2"> <input type="number" id="feedbackNumber" step="0.01" value="0.2"> </div>
-                <div class="control-group"> <label for="thresholdRange">Threshold:</label> <input type="range" id="thresholdRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="thresholdNumber" step="0.01" value="0.5"> </div>
+                <div class="control-group" data-control-key="intensity"> <label for="intensityRange">Intensity:</label> <input type="range" id="intensityRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="intensityNumber" step="0.01" value="0.5"> </div>
+                <div class="control-group" data-control-key="displacement"> <label for="displacementRange">Displace:</label> <input type="range" id="displacementRange" min="0.0" max="0.1" step="0.001" value="0.01"> <input type="number" id="displacementNumber" step="0.001" value="0.01"> </div>
+                <div class="control-group" data-control-key="feedback"> <label for="feedbackRange">Feedback:</label> <input type="range" id="feedbackRange" min="0.0" max="0.95" step="0.01" value="0.2"> <input type="number" id="feedbackNumber" step="0.01" value="0.2"> </div>
+                <div class="control-group" data-control-key="threshold"> <label for="thresholdRange">Threshold:</label> <input type="range" id="thresholdRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="thresholdNumber" step="0.01" value="0.5"> </div>
+
+                <!-- CRT Controls -->
+                <div class="control-group" data-control-key="scanlineIntensity">
+                    <label for="scanlineIntensityRange">Scanline Str:</label>
+                    <input type="range" id="scanlineIntensityRange" min="0.0" max="1.0" step="0.01" value="0.3">
+                    <input type="number" id="scanlineIntensityNumber" step="0.01" value="0.3">
+                </div>
+                <div class="control-group" data-control-key="scanlineDensity">
+                    <label for="scanlineDensityRange">Scanline Den:</label>
+                    <input type="range" id="scanlineDensityRange" min="100.0" max="1200.0" step="10" value="600.0">
+                    <input type="number" id="scanlineDensityNumber" step="10" value="600.0">
+                </div>
+                <div class="control-group" data-control-key="curvatureAmount">
+                    <label for="curvatureAmountRange">Curvature:</label>
+                    <input type="range" id="curvatureAmountRange" min="0.0" max="0.5" step="0.005" value="0.1">
+                    <input type="number" id="curvatureAmountNumber" step="0.005" value="0.1">
+                </div>
+                <div class="control-group" data-control-key="phosphorOffset">
+                    <label for="phosphorOffsetRange">Phosphor:</label>
+                    <input type="range" id="phosphorOffsetRange" min="0.0" max="0.02" step="0.0005" value="0.003">
+                    <input type="number" id="phosphorOffsetNumber" step="0.0005" value="0.003">
+                </div>
+                <div class="control-group" data-control-key="vignetteStrength">
+                    <label for="vignetteStrengthRange">Vignette Str:</label>
+                    <input type="range" id="vignetteStrengthRange" min="0.0" max="1.0" step="0.01" value="0.2">
+                    <input type="number" id="vignetteStrengthNumber" step="0.01" value="0.2">
+                </div>
+                <div class="control-group" data-control-key="vignetteSoftness">
+                    <label for="vignetteSoftnessRange">Vignette Soft:</label>
+                    <input type="range" id="vignetteSoftnessRange" min="0.0" max="2.0" step="0.01" value="0.5">
+                    <input type="number" id="vignetteSoftnessNumber" step="0.01" value="0.5">
+                </div>
+
+                <!-- Wave Warp Controls -->
+                <div class="control-group" data-control-key="waveDensity">
+                    <label for="waveDensityRange">Wave Density:</label>
+                    <input type="range" id="waveDensityRange" min="5.0" max="100.0" step="1" value="20.0">
+                    <input type="number" id="waveDensityNumber" step="1" value="20.0">
+                </div>
+                <div class="control-group" data-control-key="waveSpeed">
+                    <label for="waveSpeedRange">Wave Speed:</label>
+                    <input type="range" id="waveSpeedRange" min="0.0" max="10.0" step="0.1" value="1.0">
+                    <input type="number" id="waveSpeedNumber" step="0.1" value="1.0">
+                </div>
+                <div class="control-group" data-control-key="waveAmplitude">
+                    <label for="waveAmplitudeRange">Wave Amplitude:</label>
+                    <input type="range" id="waveAmplitudeRange" min="0.0" max="0.15" step="0.001" value="0.02">
+                    <input type="number" id="waveAmplitudeNumber" step="0.001" value="0.02">
+                </div>
+
+                <!-- Kaleidoscope Controls -->
+                <div class="control-group" data-control-key="kaleidoSegments">
+                    <label for="kaleidoSegmentsRange">Kaleido Segs:</label>
+                    <input type="range" id="kaleidoSegmentsRange" min="2" max="20" step="1" value="6">
+                    <input type="number" id="kaleidoSegmentsNumber" min="2" max="20" step="1" value="6">
+                </div>
+
+                <!-- Fisheye Controls -->
+                <div class="control-group" data-control-key="fisheyeStrength">
+                    <label for="fisheyeStrengthRange">Fisheye Str:</label>
+                    <input type="range" id="fisheyeStrengthRange" min="0.0" max="1.5" step="0.01" value="0.3">
+                    <input type="number" id="fisheyeStrengthNumber" step="0.01" value="0.3">
+                </div>
+
+                <!-- Noise Glitch Controls -->
+                <div class="control-group" data-control-key="glitchStrength">
+                    <label for="glitchStrengthRange">Glitch Strength:</label>
+                    <input type="range" id="glitchStrengthRange" min="0.0" max="1.0" step="0.01" value="0.1">
+                    <input type="number" id="glitchStrengthNumber" step="0.01" value="0.1">
+                </div>
+
+                <!-- Fisheye Controls -->
+                <div class="control-group" data-control-key="fisheyeStrength">
+                    <label for="fisheyeStrengthRange">Fisheye Str:</label>
+                    <input type="range" id="fisheyeStrengthRange" min="0.0" max="1.5" step="0.01" value="0.3">
+                    <input type="number" id="fisheyeStrengthNumber" step="0.01" value="0.3">
+                </div>
             </div>
             
             <div id="advanced-tab" class="tab-content">
@@ -188,6 +273,10 @@
                 <div class="control-group"> <label for="brightnessRange">Brightness:</label> <input type="range" id="brightnessRange" min="-0.5" max="0.5" step="0.01" value="0.0"> <input type="number" id="brightnessNumber" step="0.01" value="0.0"> </div>
                 <div class="control-group"> <label for="contrastRange">Contrast:</label> <input type="range" id="contrastRange" min="0.5" max="2.0" step="0.01" value="1.0"> <input type="number" id="contrastNumber" step="0.01" value="1.0"> </div>
                 <div class="control-group"> <label for="saturationRange">Saturation:</label> <input type="range" id="saturationRange" min="0.0" max="2.0" step="0.01" value="1.0"> <input type="number" id="saturationNumber" step="0.01" value="1.0"> </div>
+                <div class="control-group" style="margin-top: 15px;">
+                    <label for="audioReactiveCheckbox" style="flex-basis: auto; margin-right: 10px;">Enable Audio Reactivity (Mic):</label>
+                    <input type="checkbox" id="audioReactiveCheckbox" style="width: 20px; height: 20px; flex-shrink: 0;">
+                </div>
             </div>
         </div>
         <div id="resizeHandle"></div>
@@ -525,7 +614,361 @@
                 finalColor = clamp(finalColor, 0.0, 1.0);
                 gl_FragColor = finalColor;
             }`;
-        
+
+        const crtShader = `
+            precision highp float;
+            varying vec2 v_texCoord;
+            uniform sampler2D u_webcamTexture;
+            uniform float u_time;
+            uniform float u_brightness;
+            uniform float u_contrast;
+            uniform float u_saturation;
+            uniform float u_intensity;
+
+            uniform float u_scanlineIntensity;
+            uniform float u_scanlineDensity;
+            uniform float u_curvatureAmount;
+            uniform float u_phosphorOffset;
+            uniform float u_vignetteStrength;
+            uniform float u_vignetteSoftness;
+
+            vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+                vec3 result = color + brightness;
+                result = (result - 0.5) * contrast + 0.5;
+                return clamp(result, 0.0, 1.0);
+            }
+
+            vec3 adjustSaturation(vec3 color, float saturation) {
+                vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+                return mix(gray, color, saturation);
+            }
+
+            void main() {
+                vec2 uv = v_texCoord;
+                uv.x = 1.0 - uv.x; // Mirror webcam input
+
+                // Screen Curvature (Barrel Distortion)
+                vec2 centeredUV = uv * 2.0 - 1.0;
+                float r_sq = dot(centeredUV, centeredUV);
+                vec2 distortedUV = centeredUV * (1.0 - u_curvatureAmount * r_sq);
+                distortedUV = (distortedUV + 1.0) * 0.5;
+
+                vec4 finalColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+                if (distortedUV.x >= 0.0 && distortedUV.x <= 1.0 && distortedUV.y >= 0.0 && distortedUV.y <= 1.0) {
+                    // Chromatic Aberration
+                    vec2 r_offset = vec2(u_phosphorOffset, 0.0);
+                    vec2 b_offset = vec2(-u_phosphorOffset, 0.0);
+                    float r_channel = texture2D(u_webcamTexture, distortedUV + r_offset).r;
+                    float g_channel = texture2D(u_webcamTexture, distortedUV).g;
+                    float b_channel = texture2D(u_webcamTexture, distortedUV + b_offset).b;
+                    finalColor = vec4(r_channel, g_channel, b_channel, 1.0);
+
+                    // Scanlines
+                    float scanlineEffect = sin(distortedUV.y * u_scanlineDensity * 3.1415926535 * 2.0); // Using PI for frequency
+                    scanlineEffect = (scanlineEffect + 1.0) * 0.5; // Remap to 0-1
+                    finalColor.rgb *= (1.0 - u_scanlineIntensity * (1.0 - scanlineEffect));
+                }
+
+                // Vignette
+                float vignette = 1.0 - u_vignetteStrength * smoothstep(u_vignetteSoftness, 0.0, length(centeredUV * 1.414)); // 1.414 approx sqrt(2) for corners
+                finalColor.rgb *= vignette;
+
+                finalColor.rgb = adjustSaturation(
+                    adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
+                    u_saturation
+                );
+                gl_FragColor = finalColor;
+            }
+        `;
+
+        const mirrorShaderGLSL = `
+precision highp float;
+varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture;
+uniform float u_brightness;
+uniform float u_contrast;
+uniform float u_saturation;
+// uniform float u_intensity; // Available but not used by this simple mirror
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    // Most shaders use vec2(1.0 - v_texCoord.x, v_texCoord.y) to mirror webcam input.
+    // This shader uses v_texCoord.x directly to show the NON-mirrored version,
+    // thus appearing as a "Horizontal Mirror" relative to the other effects.
+    vec4 finalColor = texture2D(u_webcamTexture, vec2(v_texCoord.x, v_texCoord.y));
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
+const waveWarpShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_waveDensity; uniform float u_waveSpeed; uniform float u_waveAmplitude;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    float modulatedAmplitude = u_waveAmplitude * (0.5 + u_intensity * 0.5);
+    texCoord.y += sin(texCoord.x * u_waveDensity + u_time * u_waveSpeed) * modulatedAmplitude;
+    vec4 finalColor;
+    if (texCoord.y < 0.0 || texCoord.y > 1.0 || texCoord.x < 0.0 || texCoord.x > 1.0) { finalColor = vec4(0.0,0.0,0.0,1.0); }
+    else { finalColor = texture2D(u_webcamTexture, texCoord); }
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
+const kaleidoscopeShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_kaleidoSegments;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+const float PI = 3.14159265359;
+void main() {
+    vec2 originalTexCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    vec2 p = originalTexCoord - 0.5;
+    float r = length(p); float angle = atan(p.y, p.x);
+    float segments = max(2.0, floor(u_kaleidoSegments));
+    float segmentAngleSlice = PI / segments;
+    angle += u_time * 0.1 * (u_intensity - 0.5) * 2.0; // Intensity affects rotation speed/direction
+    angle = mod(angle, segmentAngleSlice * 2.0);
+    if (angle > segmentAngleSlice) { angle = (segmentAngleSlice * 2.0) - angle; }
+    vec2 uvKaleido = vec2(r * cos(angle), r * sin(angle)) + 0.5;
+    vec4 finalColor = texture2D(u_webcamTexture, uvKaleido);
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
+const fisheyeShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_fisheyeStrength;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    vec2 uv_centered = texCoord * 2.0 - 1.0;
+    float d = length(uv_centered);
+    if (d != 0.0) { // Avoid division by zero at center
+        uv_centered = uv_centered / (1.0 + u_fisheyeStrength * d);
+    }
+    vec2 finalUV = (uv_centered + 1.0) / 2.0;
+    vec4 finalColor;
+    if (finalUV.x < 0.0 || finalUV.x > 1.0 || finalUV.y < 0.0 || finalUV.y > 1.0) { finalColor = vec4(0.0,0.0,0.0,1.0); }
+    else { finalColor = texture2D(u_webcamTexture, finalUV); }
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
+const noiseGlitchShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_glitchStrength;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+float random (vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123 + u_time * 0.1); }
+float noise (vec2 st) { vec2 i=floor(st);vec2 f=fract(st);float a=random(i);float b=random(i+vec2(1.,0.));float c=random(i+vec2(0.,1.));float d=random(i+vec2(1.,1.));vec2 u=f*f*(3.-2.*f);return mix(a,b,u.x)+(c-a)*u.y*(1.-u.x)+(d-b)*u.x*u.y;}
+
+void main() {
+    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    float actualGlitchStrength = u_glitchStrength * (0.5 + u_intensity * 0.5);
+    vec4 finalColor = texture2D(u_webcamTexture, texCoord);
+    if (random(vec2(texCoord.y * (10.0 + actualGlitchStrength * 20.0), u_time)) > (1.0 - actualGlitchStrength * 0.25)) {
+        float slipOffset = (random(vec2(texCoord.y * 1.3, u_time * 1.1)) - 0.5) * 0.3;
+        finalColor = texture2D(u_webcamTexture, vec2(fract(texCoord.x + slipOffset), texCoord.y));
+    }
+    if (actualGlitchStrength > 0.01) {
+         float rNoise = (noise(texCoord * 50.0 + u_time * 2.0) - 0.5) * 0.1 * actualGlitchStrength;
+         finalColor.r = fract(finalColor.r + rNoise);
+    }
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = clamp(finalColor, 0.0, 1.0);
+}`;
+
+// Feedback Displace Shader
+const feedbackDisplaceShaderGLSL = `
+    precision highp float; // Changed to highp for consistency and potential precision needs
+    varying vec2 v_texCoord;
+
+    // u_webcamTexture (TEXTURE0) is the current live input
+    // u_previousFrameTexture (TEXTURE1) is the output of the last frame, used here as the displacement map source
+    uniform sampler2D u_webcamTexture;
+    uniform sampler2D u_previousFrameTexture; // This will be used as the displacement map.
+    // uniform sampler2D u_displacement_texture_feedback; // This is conceptually u_previousFrameTexture (TEXTURE1) for this effect.
+                                                        // The actual uniform u_displacement_texture_feedback will be set to TEXTURE1 in drawScene.
+    uniform float u_displacement_map_strength;
+    uniform vec2 u_resolution;
+    uniform float u_brightness; // Standard post-processing
+    uniform float u_contrast;   // Standard post-processing
+    uniform float u_saturation; // Standard post-processing
+    uniform float u_intensity;  // To modulate displacement strength
+
+    vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+        vec3 result = color + brightness;
+        result = (result - 0.5) * contrast + 0.5;
+        return clamp(result, 0.0, 1.0);
+    }
+
+    vec3 adjustSaturation(vec3 color, float saturation) {
+        vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+        return mix(gray, color, saturation);
+    }
+
+    void main() {
+        // Sample the displacement map (using previous frame's output, which is on u_previousFrameTexture)
+        vec4 displacementColor = texture2D(u_previousFrameTexture, v_texCoord);
+
+        // Modulate displacement strength with intensity
+        float actualDisplacementStrength = u_displacement_map_strength * (0.5 + u_intensity * 0.5);
+
+        vec2 displacement = (displacementColor.rg * 2.0 - 1.0) * actualDisplacementStrength;
+        // Optional: For pixel-based displacement, uncomment and ensure u_resolution is correctly passed
+        // if (u_resolution.x > 0.0 && u_resolution.y > 0.0) {
+        //     displacement = (displacementColor.rg * 2.0 - 1.0) * actualDisplacementStrength / u_resolution;
+        // } else {
+        //     displacement = (displacementColor.rg * 2.0 - 1.0) * actualDisplacementStrength * 0.01; // Fallback if resolution is 0
+        // }
+
+        // Standard mirroring for webcam input before displacement
+        vec2 mirroredWebcamTexcoord = vec2(1.0 - v_texCoord.x, v_texCoord.y);
+        vec2 displacedTexcoord = mirroredWebcamTexcoord + displacement;
+
+        vec4 finalColor;
+        // Boundary check after displacement
+        if (displacedTexcoord.x < 0.0 || displacedTexcoord.x > 1.0 || displacedTexcoord.y < 0.0 || displacedTexcoord.y > 1.0) {
+            finalColor = vec4(0.0, 0.0, 0.0, 1.0); // Output black if out of bounds
+        } else {
+            finalColor = texture2D(u_webcamTexture, displacedTexcoord);
+        }
+
+        finalColor.rgb = adjustSaturation(
+            adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
+            u_saturation
+        );
+        gl_FragColor = finalColor;
+    }
+`;
+
+const displacementMapShaderGLSL = `
+    precision highp float; varying vec2 v_texCoord;
+    uniform sampler2D u_webcamTexture; uniform sampler2D u_previousFrameTexture;
+    uniform float u_time; uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+    uniform float u_displacementStrength;
+
+    vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+        vec3 result = color + brightness;
+        result = (result - 0.5) * contrast + 0.5;
+        return clamp(result, 0.0, 1.0);
+    }
+    vec3 adjustSaturation(vec3 color, float saturation) {
+        vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+        return mix(gray, color, saturation);
+    }
+    float getLuminance(vec3 color) {
+        return dot(color, vec3(0.299, 0.587, 0.114));
+    }
+
+    void main() {
+        vec2 screenUV = v_texCoord;
+        vec4 prevFrameColor = texture2D(u_previousFrameTexture, screenUV);
+        float prevFrameLuminance = getLuminance(prevFrameColor.rgb);
+        float actualDisplacementStrength = u_displacementStrength * (0.5 + u_intensity * 0.5);
+        vec2 displacementOffset = vec2(prevFrameLuminance - 0.5) * actualDisplacementStrength;
+        vec2 webcamSampleUV = vec2(1.0 - screenUV.x, screenUV.y);
+        vec2 displacedWebcamSampleUV = webcamSampleUV + displacementOffset;
+        vec4 finalColor;
+        if (displacedWebcamSampleUV.x < 0.0 || displacedWebcamSampleUV.x > 1.0 || displacedWebcamSampleUV.y < 0.0 || displacedWebcamSampleUV.y > 1.0) {
+            finalColor = vec4(0.0, 0.0, 0.0, 1.0);
+        } else {
+            finalColor = texture2D(u_webcamTexture, displacedWebcamSampleUV);
+        }
+        finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+        gl_FragColor = finalColor;
+}`;
+
+const fisheyeShaderGLSL = `
+precision highp float; varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture; uniform float u_time;
+uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
+uniform float u_fisheyeStrength;
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    vec2 uv_centered = texCoord * 2.0 - 1.0;
+    float d = length(uv_centered);
+    if (d != 0.0) { // Avoid division by zero at center
+        uv_centered = uv_centered / (1.0 + u_fisheyeStrength * d);
+    }
+    vec2 finalUV = (uv_centered + 1.0) / 2.0;
+    vec4 finalColor;
+    if (finalUV.x < 0.0 || finalUV.x > 1.0 || finalUV.y < 0.0 || finalUV.y > 1.0) { finalColor = vec4(0.0,0.0,0.0,1.0); }
+    else { finalColor = texture2D(u_webcamTexture, finalUV); }
+    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
+    gl_FragColor = finalColor;
+}`;
+
         const fsPassthroughSource = ` precision mediump float; varying vec2 v_texCoord; uniform sampler2D u_textureToDraw; void main() { gl_FragColor = texture2D(u_textureToDraw, v_texCoord); } `;
         const canvas = document.getElementById('outputCanvas');
         const video = document.getElementById('webcamVideo');
@@ -550,7 +993,20 @@
             threshold: 0.5,
             brightness: 0.0,
             contrast: 1.0,
-            saturation: 1.0
+            saturation: 1.0,
+            scanlineIntensity: 0.3,
+            scanlineDensity: 600.0,
+            curvatureAmount: 0.1,
+            phosphorOffset: 0.003,
+            vignetteStrength: 0.2,
+            vignetteSoftness: 0.5,
+            waveDensity: 20.0,
+            waveSpeed: 1.0,
+            waveAmplitude: 0.02,
+            kaleidoSegments: 6.0,
+            fisheyeStrength: 0.3,
+            glitchStrength: 0.1,
+            displacementMapStrength: 0.02, // Feedback Displace
         };
         
         // Default presets for different visual styles
@@ -568,9 +1024,37 @@
             datamosh: datamoshShader,
             pixelsort: pixelSortShader,
             feedback: feedbackShader,
-            colorshift: colorShiftShader
+            colorshift: colorShiftShader,
+            crt: crtShader,
+            mirror: mirrorShaderGLSL,
+            wavewarp: waveWarpShaderGLSL,
+            kaleidoscope: kaleidoscopeShaderGLSL,
+            noiseGlitch: noiseGlitchShaderGLSL,
+            fisheye: fisheyeShaderGLSL,
+            feedbackDisplace: feedbackDisplaceShaderGLSL
         };
-        
+
+        const shaderControlRelevance = {
+            'datamosh': ['intensity', 'displacement', 'feedback'],
+            'pixelsort': ['intensity', 'displacement', 'feedback', 'threshold'],
+            'feedback': ['intensity', 'displacement', 'feedback', 'threshold'],
+            'colorshift': ['intensity', 'displacement', 'feedback', 'threshold'],
+            'crt': ['scanlineIntensity', 'scanlineDensity', 'curvatureAmount', 'phosphorOffset', 'vignetteStrength', 'vignetteSoftness'],
+            'mirror': [],
+            'wavewarp': ['waveDensity', 'waveSpeed', 'waveAmplitude'],
+            'kaleidoscope': ['kaleidoSegments'],
+            'fisheye': ['fisheyeStrength'],
+            'noiseGlitch': ['glitchStrength'],
+            'feedbackDisplace': ['displacementMapStrength', 'intensity']
+        };
+
+        let audioContext = null;
+        let analyserNode = null;
+        let audioDataArray = null;
+        let isAudioSetup = false;
+        let audioReactiveEnabled = false;
+        let smoothedVolume = 0.0;
+
         const freezeButton = document.getElementById('freezeButton'); const clearFreezeButton = document.getElementById('clearFreezeButton');
         const randomizeButton = document.getElementById('randomizeButton');
         const controlsPanel = document.getElementById('controls'); const controlsContent = document.getElementById('controlsContent');
@@ -606,6 +1090,56 @@
         function initBuffers() { positionBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1.,-1., 1.,-1., -1., 1., -1., 1., 1.,-1., 1., 1.,]), gl.STATIC_DRAW); texCoordBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0.,0., 1.,0., 0.,1., 0.,1., 1.,0., 1.,1.,]), gl.STATIC_DRAW); gl.bindBuffer(gl.ARRAY_BUFFER, null); return true; }
         function createAndSetupTexture(width, height) { if (!gl) return null; const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null); } catch (e) { return null; } return tex; }
         function copyTexture(sourceTexture, destTexture) { if (!gl || !passthroughProgram || !fboCopy || !positionBuffer || !texCoordBuffer) { return; } gl.bindFramebuffer(gl.FRAMEBUFFER, fboCopy); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, destTexture, 0); gl.viewport(0, 0, canvas.width, canvas.height); gl.useProgram(passthroughProgram); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, sourceTexture); gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0); gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(passthroughProgram.aPosLoc); gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer); gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(passthroughProgram.aTexLoc); gl.drawArrays(gl.TRIANGLES, 0, 6); gl.bindFramebuffer(gl.FRAMEBUFFER, null); }
+
+        async function setupAudio() {
+            if (isAudioSetup) return true;
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showError("Audio Reactivity Error: getUserMedia not supported.", false);
+                return false;
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                analyserNode = audioContext.createAnalyser();
+                analyserNode.fftSize = 256;
+                source.connect(analyserNode);
+                audioDataArray = new Uint8Array(analyserNode.frequencyBinCount);
+                isAudioSetup = true;
+                console.log("Audio setup complete.");
+                requestAnimationFrame(processAudioFrame); // Start processing loop
+                return true;
+            } catch (err) {
+                showError(`Audio Reactivity Error: ${err.name} - ${err.message}. Check mic permissions.`, false);
+                isAudioSetup = false;
+                return false;
+            }
+        }
+
+        function processAudioFrame() {
+            if (!isAudioSetup || !analyserNode || !audioDataArray) {
+                if (audioReactiveEnabled) requestAnimationFrame(processAudioFrame); // Keep trying if enabled
+                return;
+            }
+            if (!audioReactiveEnabled) {
+                smoothedVolume = 0.0;
+                return;
+            }
+            analyserNode.getByteFrequencyData(audioDataArray);
+            let sumOfSquares = 0;
+            for (let i = 0; i < audioDataArray.length; i++) {
+                const normalizedValue = audioDataArray[i] / 255.0;
+                sumOfSquares += normalizedValue * normalizedValue;
+            }
+            const rms = Math.sqrt(sumOfSquares / audioDataArray.length);
+            const smoothingFactor = 0.1;
+            smoothedVolume = rms * smoothingFactor + smoothedVolume * (1.0 - smoothingFactor);
+            smoothedVolume = Math.min(1.0, Math.max(0.0, smoothedVolume));
+            if (audioReactiveEnabled) {
+                requestAnimationFrame(processAudioFrame);
+            }
+        }
+
         function initFramebuffersAndTextures(width, height) {
             if (fbTexture1) gl.deleteTexture(fbTexture1); if (fbTexture2) gl.deleteTexture(fbTexture2); if (webcamTexture) gl.deleteTexture(webcamTexture);
             frameHistoryTextures.forEach(tex => gl.deleteTexture(tex)); frozenFrameTextures.forEach(tex => gl.deleteTexture(tex));
@@ -644,11 +1178,24 @@
             const uniformNames = [
                 'u_webcamTexture', 'u_previousFrameTexture', 'u_time', 'u_motionThreshold',
                 'u_trailPersistence', 'u_hueShiftSpeed', 'u_motionExtrapolation', 'u_intensity',
-                'u_displacement', 'u_feedback', 'u_threshold', 'u_brightness', 'u_contrast', 'u_saturation'
+                'u_displacement', 'u_feedback', 'u_threshold', 'u_brightness', 'u_contrast', 'u_saturation',
+                'u_scanlineIntensity', 'u_scanlineDensity', 'u_curvatureAmount', 'u_phosphorOffset',
+                'u_vignetteStrength', 'u_vignetteSoftness',
+                'u_waveDensity', 'u_waveSpeed', 'u_waveAmplitude',
+                'u_kaleidoSegments', 'u_fisheyeStrength', 'u_glitchStrength',
+                // 'u_fisheyeStrength' // Duplicate removed
+                'u_displacement_map_strength', 'u_displacement_texture_feedback', 'u_resolution'
             ];
             
             /* @tweakable tolerance for missing uniforms in shaders */
-            const optionalUniforms = ['u_threshold']; // Uniforms that are allowed to be missing
+            const optionalUniforms = [
+                'u_threshold', 'u_scanlineIntensity', 'u_scanlineDensity', 'u_curvatureAmount',
+                'u_phosphorOffset', 'u_vignetteStrength', 'u_vignetteSoftness',
+                'u_waveDensity', 'u_waveSpeed', 'u_waveAmplitude',
+                'u_kaleidoSegments', 'u_fisheyeStrength', 'u_glitchStrength',
+                // 'u_fisheyeStrength' // Duplicate removed
+                'u_displacement_map_strength', 'u_displacement_texture_feedback', 'u_resolution'
+            ]; // Uniforms that are allowed to be missing
             
             let allRequiredOk = true;
             uniformNames.forEach(name => {
@@ -692,7 +1239,20 @@
             threshold: { precision: 2, isInt: false },
             brightness: { precision: 2, isInt: false },
             contrast: { precision: 2, isInt: false },
-            saturation: { precision: 2, isInt: false }
+            saturation: { precision: 2, isInt: false },
+            scanlineIntensity: { precision: 2, isInt: false },
+            scanlineDensity: { precision: 1, isInt: false },
+            curvatureAmount: { precision: 3, isInt: false },
+            phosphorOffset: { precision: 4, isInt: false },
+            vignetteStrength: { precision: 2, isInt: false },
+            vignetteSoftness: { precision: 2, isInt: false },
+            waveDensity: { precision: 1, isInt: false },
+            waveSpeed: { precision: 2, isInt: false },
+            waveAmplitude: { precision: 3, isInt: false },
+            kaleidoSegments: { precision: 0, isInt: true },
+            glitchStrength: { precision: 2, isInt: false },
+            fisheyeStrength: { precision: 2, isInt: false },
+            displacementMapStrength: { precision: 3, isInt: false, label: 'Displacement Strength'} // Feedback Displace
         };
         function updateControlValueFromSlider(controlName, newValue, precision, isInt) {
             const { range, number } = getControlElements(controlName); if (!range || !number) return; let valueToStore = newValue;
@@ -721,7 +1281,8 @@
             gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, webcamTexture); gl.uniform1i(shaderProgram.u_webcamTextureLoc, 0);
             gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, prevFrameTextureToBind); gl.uniform1i(shaderProgram.u_previousFrameTextureLoc, 1);
             const elapsedTime = (performance.now() - startTime) * 0.001;
-            
+
+            // Note: Some uniforms (e.g., u_threshold) are only used by specific shaders. Their corresponding UI controls won't affect visuals if a shader that doesn't use them is active.
             // Safe uniform setting helper function
             /* @tweakable safely sets uniform value if the location exists */
             function safeUniform1f(name, value) {
@@ -737,16 +1298,49 @@
             safeUniform1f('u_trailPersistence', controlValues.trail);
             safeUniform1f('u_hueShiftSpeed', controlValues.hue);
             safeUniform1f('u_motionExtrapolation', controlValues.extrap);
-            safeUniform1f('u_intensity', controlValues.intensity);
+
+            let currentIntensity = controlValues.intensity; // Base intensity from UI
+            if (audioReactiveEnabled && isAudioSetup) {
+                currentIntensity = Math.min(1.0, controlValues.intensity + smoothedVolume * 0.75);
+            }
+            safeUniform1f('u_intensity', currentIntensity);
             safeUniform1f('u_displacement', controlValues.displacement);
             safeUniform1f('u_feedback', controlValues.feedback);
             safeUniform1f('u_threshold', controlValues.threshold);
             safeUniform1f('u_brightness', controlValues.brightness);
             safeUniform1f('u_contrast', controlValues.contrast);
             safeUniform1f('u_saturation', controlValues.saturation);
-            
+            safeUniform1f('u_scanlineIntensity', controlValues.scanlineIntensity);
+            safeUniform1f('u_scanlineDensity', controlValues.scanlineDensity);
+            safeUniform1f('u_curvatureAmount', controlValues.curvatureAmount);
+            safeUniform1f('u_phosphorOffset', controlValues.phosphorOffset);
+            safeUniform1f('u_vignetteStrength', controlValues.vignetteStrength);
+            safeUniform1f('u_vignetteSoftness', controlValues.vignetteSoftness);
+            safeUniform1f('u_waveDensity', controlValues.waveDensity);
+            safeUniform1f('u_waveSpeed', controlValues.waveSpeed);
+            safeUniform1f('u_waveAmplitude', controlValues.waveAmplitude);
+            safeUniform1f('u_kaleidoSegments', controlValues.kaleidoSegments);
+            safeUniform1f('u_fisheyeStrength', controlValues.fisheyeStrength);
+            safeUniform1f('u_glitchStrength', controlValues.glitchStrength);
+            safeUniform1f('u_displacement_map_strength', controlValues.displacementMapStrength);
+
+            // For feedbackDisplaceShader, u_displacement_texture_feedback should sample from the same texture as u_previousFrameTexture (TEXTURE1)
+            const displacementTextureFeedbackLoc = shaderProgram['u_displacement_texture_feedbackLoc'];
+            if (displacementTextureFeedbackLoc !== null && displacementTextureFeedbackLoc !== undefined) {
+                 gl.uniform1i(displacementTextureFeedbackLoc, 1); // TEXTURE1 is u_previousFrameTexture
+            }
+
+            const resolutionLoc = shaderProgram['u_resolutionLoc'];
+            if (resolutionLoc !== null && resolutionLoc !== undefined) {
+                if (canvas && typeof canvas.width === 'number' && typeof canvas.height === 'number') {
+                    gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
+                } else {
+                    gl.uniform2f(resolutionLoc, 640.0, 480.0); // Fallback resolution
+                }
+            }
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
-            
+
             if (!isFrozen) { copyTexture(currentDestTexture, frameHistoryTextures[historyWriteIndex]); historyWriteIndex = (historyWriteIndex + 1) % frameHistoryTextures.length; }
             gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight); gl.useProgram(passthroughProgram);
             gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, currentDestTexture); gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
@@ -846,6 +1440,28 @@
             }
             
             currentEffect = effectName;
+
+            // --- Start of Dynamic UI update logic ---
+            const effectsTab = document.getElementById('effects-tab');
+            if (effectsTab) {
+                const allEffectControls = effectsTab.querySelectorAll('div.control-group[data-control-key]');
+                const relevantKeys = shaderControlRelevance[effectName] || [];
+
+                allEffectControls.forEach(controlDiv => {
+                    const controlKey = controlDiv.dataset.controlKey;
+                    if (relevantKeys.includes(controlKey)) {
+                        controlDiv.style.display = ''; // Revert to default CSS (flex)
+                    } else {
+                        controlDiv.style.display = 'none';
+                    }
+                });
+            }
+
+            const effectTitleElement = document.getElementById('currentEffectTitle');
+            if (effectTitleElement) {
+                effectTitleElement.textContent = effectName ? `${effectName} Controls` : 'Effect Controls';
+            }
+            // --- End of Dynamic UI update logic ---
             console.log(`Changed effect to: ${effectName}`);
         }
         
@@ -999,6 +1615,7 @@
                 applyPreset(presetSelector.value);
             });
             
+            // Changing effects will load different shaders. Some UI controls in the 'Effects' tab (e.g., 'Threshold') might not be relevant for all selected effects.
             effectSelector.addEventListener('change', () => {
                 changeEffect(effectSelector.value);
             });
@@ -1035,6 +1652,32 @@
             }
             
             await setupMediaSource('webcam', { facingMode: currentFacingMode });
+
+            const audioReactiveCheckbox = document.getElementById('audioReactiveCheckbox');
+            if (audioReactiveCheckbox) {
+                audioReactiveCheckbox.checked = audioReactiveEnabled;
+                audioReactiveCheckbox.addEventListener('change', async () => {
+                    audioReactiveEnabled = audioReactiveCheckbox.checked;
+                    if (audioReactiveEnabled) {
+                        if (!isAudioSetup) {
+                            const audioReady = await setupAudio();
+                            if (!audioReady) {
+                                audioReactiveCheckbox.checked = false;
+                                audioReactiveEnabled = false;
+                                showError("Failed to initialize audio. Reactivity disabled.", false);
+                            }
+                        } else {
+                            requestAnimationFrame(processAudioFrame); // Ensure loop is running
+                        }
+                    } else {
+                        console.log("Audio reactivity disabled.");
+                    }
+                });
+            }
+
+            if (effectSelector) { // Ensure effectSelector is available
+                changeEffect(effectSelector.value); // Set initial UI state for controls
+            }
         }
         
         // Update the randomization function
