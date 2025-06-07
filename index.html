@@ -288,6 +288,32 @@
         <input type="range" id="rippleSpeedRange" min="0.0" max="3.0" step="0.05" value="0.5">
         <input type="number" id="rippleSpeedNumber" step="0.05" value="0.5">
     </div>
+    <div class="control-group" data-control-key="slitScanSpeed">
+        <label for="slitScanSpeedRange">Scan Speed:</label>
+        <input type="range" id="slitScanSpeedRange" min="0.0001" max="0.05" step="0.0001" value="0.005">
+        <input type="number" id="slitScanSpeedNumber" step="0.0001" value="0.005">
+    </div>
+    <div class="control-group" data-control-key="sliceThickness">
+        <label for="sliceThicknessRange">Slice Thickness:</label>
+        <input type="range" id="sliceThicknessRange" min="0.001" max="0.1" step="0.001" value="0.01">
+        <input type="number" id="sliceThicknessNumber" step="0.001" value="0.01">
+    </div>
+    <div class="control-group" data-control-key="sliceSamplePosition">
+        <label for="sliceSamplePositionRange">Slice Source Pos:</label>
+        <input type="range" id="sliceSamplePositionRange" min="0.0" max="1.0" step="0.01" value="0.5">
+        <input type="number" id="sliceSamplePositionNumber" step="0.01" value="0.5">
+    </div>
+    <div class="control-group" data-control-key="scanDirection"> <!-- data-control-key for show/hide -->
+        <label for="scanDirectionSelect">Scan Direction:</label>
+        <select id="scanDirectionSelect" style="flex-grow: 1; background-color: rgba(20, 22, 30, 0.8); color: #e8e8e8; border: 1px solid rgba(80, 90, 120, 0.9); border-radius: 4px; padding: 5px; font-size: 12px;">
+            <option value="0">Horizontal Scan (Vertical Slit)</option>
+            <option value="1">Vertical Scan (Horizontal Slit)</option>
+        </select>
+    </div>
+    <div class="control-group" data-control-key="slitScanReset"> <!-- data-control-key for show/hide -->
+        <label for="resetSlitScanButton" style="flex-basis: auto; margin-right: 10px;">Reset Scan:</label>
+        <button id="resetSlitScanButton" class="main-action-button" style="flex-grow: 1;">Clear Accumulation</button>
+    </div>
             </div>
             
             <div id="advanced-tab" class="tab-content">
@@ -1051,6 +1077,35 @@
             gl_FragColor = finalColor;
         }
     `;
+
+    const drawSliceShaderSource = `
+        precision highp float;
+        varying vec2 v_texCoord; // UV of the quad we are drawing (normalized 0-1)
+
+        uniform sampler2D u_webcamTexture;
+        uniform float u_sliceSamplePosition; // Where to sample *from* the webcam (0 to 1, e.g., 0.5 for center)
+        // uniform float u_sliceThicknessWebcam; // Future use: How thick a slice to sample *from* webcam (0 to 1)
+        uniform float u_scanDirection; // 0 for vertical slit, 1 for horizontal slit
+
+        void main() {
+            vec2 sampleUV;
+            // Webcam is usually pre-mirrored by other effects.
+            // For consistency, we sample from a mirrored coordinate space.
+            vec2 mirrored_v_texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y);
+
+            if (u_scanDirection == 0.0) { // Vertical slit (samples a column from webcam)
+                // Sample from a fixed X-coordinate on the webcam (u_sliceSamplePosition)
+                // and use the current varying Y-coordinate from the destination quad.
+                sampleUV = vec2(u_sliceSamplePosition, mirrored_v_texCoord.y);
+            } else { // Horizontal slit (samples a row from webcam)
+                // Sample from a fixed Y-coordinate on the webcam (u_sliceSamplePosition)
+                // and use the current varying X-coordinate from the destination quad.
+                sampleUV = vec2(mirrored_v_texCoord.x, u_sliceSamplePosition);
+            }
+
+            gl_FragColor = texture2D(u_webcamTexture, sampleUV);
+        }`;
+
         const canvas = document.getElementById('outputCanvas');
         const video = document.getElementById('webcamVideo');
         const errorMessageDiv = document.getElementById('errorMessage');
@@ -1059,6 +1114,15 @@
         let mediaReady = false;
         let startTime = performance.now(); let renderLoopId = null;
         let fbo1, fbo2, fboCopy; let fbTexture1, fbTexture2; let currentSourceFBO, currentDestFBO; let currentSourceTexture, currentDestTexture; let webcamTexture;
+        let slitScanFBO = null;
+        let slitScanTexture = null;
+        let isSlitScanInitialized = false;
+        let scanPosition = 0.0;         // Current scan position (0 to 1)
+        let slitScanSpeed = 0.005;      // Speed of scanning per frame
+        let sliceThickness = 0.01;      // Thickness of the slice (as fraction of width/height)
+        let scanDirection = 0;          // 0 for vertical slit (scans horizontally), 1 for horizontal slit (scans vertically)
+        let slitScanProgram = null;     // To hold the shader program for drawing slices
+        let sliceSamplePosition = 0.5;  // Where to sample from webcam (0.5 is center)
         let frameCount = 0; let isFrozen = false; let frozenFrameTextures = []; const MAX_HISTORY_LENGTH = 16; let frameHistoryTextures = []; let historyWriteIndex = 0;
         
         /* @tweakable the main control values that adjust visual effects */
@@ -1090,6 +1154,9 @@
             refractionStrength: 0.02,
             rippleFrequency: 20.0,
             rippleSpeed: 0.5,
+            slitScanSpeed: 0.005,
+            sliceThickness: 0.01,
+            sliceSamplePosition: 0.5,
         };
         
         // Default presets for different visual styles
@@ -1136,6 +1203,7 @@
             'noiseGlitch': ['glitchStrength'],
             'displacementMap': ['displacementMapStrength'],
             'refraction': ['refractionStrength', 'rippleFrequency', 'rippleSpeed'],
+            'slitscan': ['slitScanSpeed', 'sliceThickness', 'sliceSamplePosition', 'scanDirection', 'slitScanReset'],
         };
 
         let audioContext = null;
@@ -1202,6 +1270,46 @@
             [fbTexture1, fbTexture2, webcamTexture, ...frameHistoryTextures].forEach(tex => { gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT); });
             gl.bindFramebuffer(gl.FRAMEBUFFER, null); return true;
         }
+
+        function initSlitScanFramebuffer(width, height) {
+            if (!gl) return false;
+
+            if (slitScanFBO) gl.deleteFramebuffer(slitScanFBO);
+            if (slitScanTexture) gl.deleteTexture(slitScanTexture);
+
+            slitScanTexture = createAndSetupTexture(width, height);
+            if (!slitScanTexture) {
+                showError("Failed to create slit scan texture.", true);
+                isSlitScanInitialized = false;
+                return false;
+            }
+
+            slitScanFBO = gl.createFramebuffer();
+            gl.bindFramebuffer(gl.FRAMEBUFFER, slitScanFBO);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, slitScanTexture, 0);
+
+            const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+            if (status !== gl.FRAMEBUFFER_COMPLETE) {
+                showError(`Slit Scan FBO incomplete. Status: ${status}`, true);
+                gl.deleteFramebuffer(slitScanFBO);
+                gl.deleteTexture(slitScanTexture);
+                slitScanFBO = null;
+                slitScanTexture = null;
+                isSlitScanInitialized = false;
+                return false;
+            }
+
+            // Clear the texture initially to black (or a chosen background)
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null); // Unbind
+
+            console.log("Slit Scan FBO initialized and cleared.");
+            isSlitScanInitialized = true;
+            return true;
+        }
+
         function setupMainShaderAttributesUniforms() {
             gl.useProgram(shaderProgram);
             const pLoc = gl.getAttribLocation(shaderProgram, 'a_position');
@@ -1304,6 +1412,9 @@
             refractionStrength: { precision: 3, isInt: false },
             rippleFrequency: { precision: 1, isInt: false },
             rippleSpeed: { precision: 2, isInt: false },
+            slitScanSpeed: { precision: 4, isInt: false },
+            sliceThickness: { precision: 3, isInt: false },
+            sliceSamplePosition: { precision: 2, isInt: false },
         };
         function updateControlValueFromSlider(controlName, newValue, precision, isInt) {
             const { range, number } = getControlElements(controlName); if (!range || !number) return; let valueToStore = newValue;
@@ -1323,94 +1434,223 @@
             updateControlValueFromSlider(name, controlValues[name], precision, isInt);
         }
         function drawScene(time) {
-            if (!gl || !shaderProgram || !passthroughProgram || (!mediaReady && !isFrozen) || !frameHistoryTextures.length) return;
-            const sourceTextureUpdated = updateSourceTexture(); if (!sourceTextureUpdated && !isFrozen && controlValues.history <= 1) return;
-            let prevFrameTextureToBind;
-            if (isFrozen && frozenFrameTextures.length > 0) { let frozenIndex = (frameCount % frozenFrameTextures.length); prevFrameTextureToBind = frozenFrameTextures[frozenIndex];
-            } else { let historyLength = Math.max(1, Math.min(Math.round(controlValues.history), frameHistoryTextures.length)); let historyReadIndex = (historyWriteIndex - 1 - (frameCount % historyLength) + frameHistoryTextures.length) % frameHistoryTextures.length; prevFrameTextureToBind = frameHistoryTextures[historyReadIndex]; }
-            gl.bindFramebuffer(gl.FRAMEBUFFER, currentDestFBO); gl.viewport(0, 0, canvas.width, canvas.height); gl.useProgram(shaderProgram);
-            gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, webcamTexture); gl.uniform1i(shaderProgram.u_webcamTextureLoc, 0);
-            gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, prevFrameTextureToBind); gl.uniform1i(shaderProgram.u_previousFrameTextureLoc, 1);
-            const elapsedTime = (performance.now() - startTime) * 0.001;
-            
-            // Safe uniform setting helper function
-            /* @tweakable safely sets uniform value if the location exists */
-            function safeUniform1f(name, value) {
-                const location = shaderProgram[name + 'Loc'];
-                if (location !== null && location !== undefined) {
-                    gl.uniform1f(location, value);
+            if (!gl || (!mediaReady && !isFrozen)) {
+                if (mediaReady === false && renderLoopId !== null) {
+                } else if (renderLoopId === null) {
+                    return;
+                }
+            }
+
+            const sourceTextureUpdated = updateSourceTexture();
+            if (!sourceTextureUpdated && !isFrozen && currentEffect !== 'slitscan') {
+                if (controlValues.history <= 1 || !frameHistoryTextures.length) {
+                     requestAnimationFrame(renderLoop); return;
                 }
             }
             
-            // Some uniforms (e.g., u_threshold) are only used by specific shaders.
-            // Their corresponding UI controls in the 'Effects' tab won't affect visuals
-            // if a shader that doesn't use them is currently active.
-            // Set all uniforms safely
-            safeUniform1f('u_time', elapsedTime);
-            safeUniform1f('u_motionThreshold', controlValues.motion);
-            safeUniform1f('u_trailPersistence', controlValues.trail);
-            safeUniform1f('u_hueShiftSpeed', controlValues.hue);
-            safeUniform1f('u_motionExtrapolation', controlValues.extrap);
+            const elapsedTime = (performance.now() - startTime) * 0.001;
 
-            let currentIntensity = controlValues.intensity;
-            if (audioReactiveEnabled && isAudioSetup) { // Only apply if enabled AND audio is actually setup
-                // Combine user intensity with smoothed audio volume.
-                // Audio can boost intensity. Max combined intensity is clamped to 1.0.
-                // The 0.75 is an amplification factor for audio's impact, can be tweaked.
-                currentIntensity = Math.min(1.0, controlValues.intensity + smoothedVolume * 0.75);
+            if (currentEffect === 'slitscan') {
+                if (!isSlitScanInitialized || !slitScanProgram || !slitScanFBO || !webcamTexture || !sourceTextureUpdated) {
+                    // Fallback or error if slit scan isn't ready or webcam texture failed to update
+                    // Draw passthrough of webcam directly to canvas to avoid black screen
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+                    gl.useProgram(passthroughProgram);
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, webcamTexture ? webcamTexture : (fbTexture1 ? fbTexture1 : canvas) ); // Show live webcam or a fallback
+                    gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
+
+                    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                    gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0);
+                    gl.enableVertexAttribArray(passthroughProgram.aPosLoc);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+                    gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0);
+                    gl.enableVertexAttribArray(passthroughProgram.aTexLoc);
+                    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+                    // requestAnimationFrame(renderLoop); // Keep main loop going - will be called at the end
+                    // return; // Skip rest of slit-scan logic for this frame
+                } else {
+
+                    // --- Slit Scan Logic ---
+                    scanPosition = fract(scanPosition + slitScanSpeed);
+
+                    gl.enable(gl.SCISSOR_TEST);
+                    let scissorX, scissorY, scissorWidth, scissorHeight;
+                    const physicalSliceThickness = Math.max(1, Math.floor(sliceThickness * (scanDirection === 0 ? gl.drawingBufferWidth : gl.drawingBufferHeight)));
+
+                    if (scanDirection === 0) { // Vertical slit, scans horizontally
+                        scissorX = Math.floor(scanPosition * (gl.drawingBufferWidth - physicalSliceThickness));
+                        scissorY = 0;
+                        scissorWidth = physicalSliceThickness;
+                        scissorHeight = gl.drawingBufferHeight;
+                    } else { // Horizontal slit, scans vertically
+                        scissorX = 0;
+                        scissorY = Math.floor(scanPosition * (gl.drawingBufferHeight - physicalSliceThickness));
+                        scissorWidth = gl.drawingBufferWidth;
+                        scissorHeight = physicalSliceThickness;
+                    }
+                    gl.scissor(scissorX, scissorY, scissorWidth, scissorHeight);
+
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, slitScanFBO);
+                    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+
+                    gl.useProgram(slitScanProgram);
+
+                    // Cache uniform locations if not already done (basic caching)
+                    if (!slitScanProgram.uWebcamTexLocS) slitScanProgram.uWebcamTexLocS = gl.getUniformLocation(slitScanProgram, 'u_webcamTexture');
+                    if (!slitScanProgram.uSliceSamplePosLoc) slitScanProgram.uSliceSamplePosLoc = gl.getUniformLocation(slitScanProgram, 'u_sliceSamplePosition');
+                    if (!slitScanProgram.uScanDirLocS) slitScanProgram.uScanDirLocS = gl.getUniformLocation(slitScanProgram, 'u_scanDirection');
+                    if (!slitScanProgram.aPosLocS) slitScanProgram.aPosLocS = gl.getAttribLocation(slitScanProgram, 'a_position');
+                    if (!slitScanProgram.aTexLocS) slitScanProgram.aTexLocS = gl.getAttribLocation(slitScanProgram, 'a_texCoord');
+
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
+                    gl.uniform1i(slitScanProgram.uWebcamTexLocS, 0);
+
+                    gl.uniform1f(slitScanProgram.uSliceSamplePosLoc, sliceSamplePosition);
+                    gl.uniform1f(slitScanProgram.uScanDirLocS, parseFloat(scanDirection));
+
+                    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                    gl.vertexAttribPointer(slitScanProgram.aPosLocS, 2, gl.FLOAT, false, 0, 0);
+                    gl.enableVertexAttribArray(slitScanProgram.aPosLocS);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+                    gl.vertexAttribPointer(slitScanProgram.aTexLocS, 2, gl.FLOAT, false, 0, 0);
+                    gl.enableVertexAttribArray(slitScanProgram.aTexLocS);
+
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+                    gl.disable(gl.SCISSOR_TEST);
+
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+                    gl.useProgram(passthroughProgram);
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, slitScanTexture);
+                    gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
+
+                    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                    gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0);
+                    gl.enableVertexAttribArray(passthroughProgram.aPosLoc);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+                    gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0);
+                    gl.enableVertexAttribArray(passthroughProgram.aTexLoc);
+
+                    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+                }
+
+            } else {
+                let prevFrameTextureToBind;
+                if (isFrozen && frozenFrameTextures.length > 0) {
+                    let frozenIndex = (frameCount % frozenFrameTextures.length);
+                    prevFrameTextureToBind = frozenFrameTextures[frozenIndex];
+                } else {
+                    let historyLength = Math.max(1, Math.min(Math.round(controlValues.history), frameHistoryTextures.length));
+                    if (historyLength === 0 && frameHistoryTextures.length > 0) historyLength = 1;
+                    else if (frameHistoryTextures.length === 0) { requestAnimationFrame(renderLoop); return; }
+
+                    let historyReadIndex = (historyWriteIndex - 1 - (frameCount % historyLength) + frameHistoryTextures.length) % frameHistoryTextures.length;
+                    prevFrameTextureToBind = frameHistoryTextures[historyReadIndex];
+                }
+
+                gl.bindFramebuffer(gl.FRAMEBUFFER, currentDestFBO);
+                gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+                gl.useProgram(shaderProgram);
+
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
+                gl.uniform1i(shaderProgram.u_webcamTextureLoc, 0);
+
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, prevFrameTextureToBind);
+                gl.uniform1i(shaderProgram.u_previousFrameTextureLoc, 1);
+
+                function safeUniform1f(name, value) { // Defined locally as it's used by this path
+                    const location = shaderProgram[name + 'Loc'];
+                    if (location !== null && location !== undefined) {
+                        gl.uniform1f(location, value);
+                    }
+                }
+
+                safeUniform1f('u_time', elapsedTime);
+                safeUniform1f('u_motionThreshold', controlValues.motion);
+                safeUniform1f('u_trailPersistence', controlValues.trail);
+                safeUniform1f('u_hueShiftSpeed', controlValues.hue);
+                safeUniform1f('u_motionExtrapolation', controlValues.extrap);
+
+                let currentIntensityVal = controlValues.intensity; // Renamed to avoid conflict
+                if (audioReactiveEnabled && isAudioSetup) {
+                    currentIntensityVal = Math.min(1.0, controlValues.intensity + smoothedVolume * 0.75);
+                }
+                safeUniform1f('u_intensity', currentIntensityVal);
+
+                safeUniform1f('u_displacement', controlValues.displacement);
+                safeUniform1f('u_feedback', controlValues.feedback);
+                safeUniform1f('u_threshold', controlValues.threshold);
+                safeUniform1f('u_brightness', controlValues.brightness);
+                safeUniform1f('u_contrast', controlValues.contrast);
+                safeUniform1f('u_saturation', controlValues.saturation);
+                safeUniform1f('u_scanlineIntensity', controlValues.scanlineIntensity);
+                safeUniform1f('u_scanlineDensity', controlValues.scanlineDensity);
+                safeUniform1f('u_curvatureAmount', controlValues.curvatureAmount);
+                safeUniform1f('u_phosphorOffset', controlValues.phosphorOffset);
+                safeUniform1f('u_vignetteStrength', controlValues.vignetteStrength);
+                safeUniform1f('u_vignetteSoftness', controlValues.vignetteSoftness);
+                safeUniform1f('u_waveDensity', controlValues.waveDensity);
+                safeUniform1f('u_waveSpeed', controlValues.waveSpeed);
+                safeUniform1f('u_waveAmplitude', controlValues.waveAmplitude);
+                safeUniform1f('u_kaleidoSegments', controlValues.kaleidoSegments);
+                safeUniform1f('u_fisheyeStrength', controlValues.fisheyeStrength);
+                safeUniform1f('u_glitchStrength', controlValues.glitchStrength);
+                safeUniform1f('u_displacementStrength', controlValues.displacementMapStrength);
+                safeUniform1f('u_refractionStrength', controlValues.refractionStrength);
+                safeUniform1f('u_rippleFrequency', controlValues.rippleFrequency);
+                safeUniform1f('u_rippleSpeed', controlValues.rippleSpeed);
+
+                // Attribute setup for main shaderProgram should be done once in changeEffect or setupMainShaderAttributesUniforms
+                // For now, assuming pLoc and tLoc are available on shaderProgram or fetched if needed.
+                // Re-using the existing logic which implies they are fetched/set during setupMainShaderAttributesUniforms
+                // which is called by changeEffect.
+                gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+                if (!isFrozen) {
+                    copyTexture(currentDestTexture, frameHistoryTextures[historyWriteIndex]);
+                    historyWriteIndex = (historyWriteIndex + 1) % frameHistoryTextures.length;
+                }
+
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+                gl.useProgram(passthroughProgram);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, currentDestTexture);
+                gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(passthroughProgram.aPosLoc);
+                gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+                gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(passthroughProgram.aTexLoc);
+
+                gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+                gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+                if (!isFrozen) {
+                    let tempFBO = currentSourceFBO; currentSourceFBO = currentDestFBO; currentDestFBO = tempFBO;
+                    let tempTex = currentSourceTexture; currentSourceTexture = currentDestTexture; currentDestTexture = tempTex;
+                }
             }
-            safeUniform1f('u_intensity', currentIntensity);
 
-            safeUniform1f('u_displacement', controlValues.displacement);
-            safeUniform1f('u_feedback', controlValues.feedback);
-            safeUniform1f('u_threshold', controlValues.threshold);
-            safeUniform1f('u_brightness', controlValues.brightness);
-            safeUniform1f('u_contrast', controlValues.contrast);
-            safeUniform1f('u_saturation', controlValues.saturation);
-            
-            // CRT Uniforms
-            safeUniform1f('u_scanlineIntensity', controlValues.scanlineIntensity);
-            safeUniform1f('u_scanlineDensity', controlValues.scanlineDensity);
-            safeUniform1f('u_curvatureAmount', controlValues.curvatureAmount);
-            safeUniform1f('u_phosphorOffset', controlValues.phosphorOffset);
-            safeUniform1f('u_vignetteStrength', controlValues.vignetteStrength);
-            safeUniform1f('u_vignetteSoftness', controlValues.vignetteSoftness);
-
-            // Wave Warp Uniforms
-            safeUniform1f('u_waveDensity', controlValues.waveDensity);
-            safeUniform1f('u_waveSpeed', controlValues.waveSpeed);
-            safeUniform1f('u_waveAmplitude', controlValues.waveAmplitude);
-
-            // Fisheye Uniform
-            safeUniform1f('u_fisheyeStrength', controlValues.fisheyeStrength);
-
-            // Noise Glitch Uniform
-            safeUniform1f('u_glitchStrength', controlValues.glitchStrength);
-
-            // Kaleidoscope Uniform
-            safeUniform1f('u_kaleidoSegments', controlValues.kaleidoSegments);
-
-            // Displacement Map Uniform
-            safeUniform1f('u_displacementStrength', controlValues.displacementMapStrength);
-
-            // Refraction Uniforms
-            safeUniform1f('u_refractionStrength', controlValues.refractionStrength);
-            safeUniform1f('u_rippleFrequency', controlValues.rippleFrequency);
-            safeUniform1f('u_rippleSpeed', controlValues.rippleSpeed);
-
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-            
-            if (!isFrozen) { copyTexture(currentDestTexture, frameHistoryTextures[historyWriteIndex]); historyWriteIndex = (historyWriteIndex + 1) % frameHistoryTextures.length; }
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight); gl.useProgram(passthroughProgram);
-            gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, currentDestTexture); gl.uniform1i(passthroughProgram.uTextureToDrawLoc, 0);
-            gl.enableVertexAttribArray(passthroughProgram.aPosLoc); gl.enableVertexAttribArray(passthroughProgram.aTexLoc);
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); gl.vertexAttribPointer(passthroughProgram.aPosLoc, 2, gl.FLOAT, false, 0, 0);
-            gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer); gl.vertexAttribPointer(passthroughProgram.aTexLoc, 2, gl.FLOAT, false, 0, 0);
-            gl.clearColor(0.0, 0.0, 0.0, 1.0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLES, 0, 6);
-            if (!isFrozen) { let tempFBO = currentSourceFBO; currentSourceFBO = currentDestFBO; currentDestFBO = tempFBO; let tempTex = currentSourceTexture; currentSourceTexture = currentDestTexture; currentDestTexture = tempTex; }
-            const err = gl.getError(); if (err !== gl.NO_ERROR) { } frameCount++;
+            const err = gl.getError(); if (err !== gl.NO_ERROR) { console.error("WebGL Error:", err); }
+            frameCount++;
+            renderLoopId = requestAnimationFrame(renderLoop);
         }
-        function renderLoop(now) { drawScene(now); renderLoopId = requestAnimationFrame(renderLoop); }
+        // function renderLoop(now) { drawScene(now); renderLoopId = requestAnimationFrame(renderLoop); } // This line was duplicated
         function startRecording() {
             if (!canvas || typeof canvas.captureStream !== 'function') { showError("Recording Error: canvas.captureStream not supported.", false); return; }
             if (typeof MediaRecorder !== 'function') { showError("Recording Error: MediaRecorder not supported.", false); return; }
@@ -1562,6 +1802,8 @@
         // Function to change the current effect/shader
         function changeEffect(effectName) {
             if (!shaderSources[effectName]) return;
+
+            const previousEffect = currentEffect; // Store the effect we are switching from
             
             const fsSource = shaderSources[effectName];
             
@@ -1581,8 +1823,36 @@
                 return;
             }
             
-            currentEffect = effectName;
+            // if (!setupMainShaderAttributesUniforms()) { ... } // This is called after currentEffect is set
+
+            // currentEffect = effectName; // Update currentEffect *after* potential cleanup
+            // console.log(`Changed effect to: ${effectName}`); // Moved further down
+
+            // Cleanup for Slit Scan if we are switching *away* from it
+            if (previousEffect === 'slitscan' && effectName !== 'slitscan') {
+                if (slitScanFBO) {
+                    gl.deleteFramebuffer(slitScanFBO);
+                    slitScanFBO = null;
+                    console.log("Slit Scan FBO deleted.");
+                }
+                if (slitScanTexture) {
+                    gl.deleteTexture(slitScanTexture);
+                    slitScanTexture = null;
+                    console.log("Slit Scan Texture deleted.");
+                }
+                isSlitScanInitialized = false;
+            }
+
+            currentEffect = effectName; // Set the new currentEffect
+
+            if (!setupMainShaderAttributesUniforms()) { // Now setup uniforms for the NEW currentEffect
+                showError(`Failed to setup uniforms for ${effectName}`);
+                // Revert to previous effect if setup fails for the new one?
+                // For now, this matches existing logic.
+                return;
+            }
             console.log(`Changed effect to: ${effectName}`);
+
 
             // Update visible controls based on the new effect's relevance
             const effectsTab = document.getElementById('effects-tab');
@@ -1603,6 +1873,17 @@
             const effectTitleElement = document.getElementById('currentEffectTitle');
             if (effectTitleElement) {
                 effectTitleElement.textContent = effectName ? `${effectName} Controls` : 'Effect Controls';
+            }
+
+            if (effectName === 'slitscan') {
+                // Always re-initialize (which includes clearing) when slitscan is selected.
+                // This ensures it's fresh and matches current canvas dimensions.
+                if (!initSlitScanFramebuffer(canvas.width, canvas.height)) {
+                    showError("Failed to initialize Slit Scan FBO. Effect may not work.", false);
+                } else {
+                    scanPosition = 0.0;
+                    console.log("Slit Scan activated and scan position reset.");
+                }
             }
         }
         
@@ -1716,9 +1997,11 @@
             // Initialize with the datamosh shader by default
             shaderProgram = createShaderProgram(vsSource, datamoshShader);
             passthroughProgram = createShaderProgram(vsSource, fsPassthroughSource);
+            slitScanProgram = createShaderProgram(vsSource, drawSliceShaderSource);
             
-            if (!shaderProgram || !passthroughProgram) { showError("Shader Program Creation Failed.", true); return; }
+            if (!shaderProgram || !passthroughProgram || !slitScanProgram) { showError("Shader Program Creation Failed.", true); return; }
             if (!setupMainShaderAttributesUniforms() || !setupPassthroughShaderAttributesUniforms()) { showError("Shader Setup Failed.", true); return; }
+            // Uniform locations for slitScanProgram will be fetched when it's used.
             
             // Setup all controls
             Object.keys(controlConfig).forEach(name => {
@@ -1799,6 +2082,96 @@
             // Ensure initial UI state for controls is set based on the default effect
             if (effectSelector) {
                 changeEffect(effectSelector.value);
+            }
+
+            // Slit Scan Speed
+            const slitScanSpeedRange = document.getElementById('slitScanSpeedRange');
+            const slitScanSpeedNumber = document.getElementById('slitScanSpeedNumber');
+            if (slitScanSpeedRange && slitScanSpeedNumber) {
+                slitScanSpeedRange.addEventListener('input', () => {
+                    controlValues.slitScanSpeed = parseFloat(slitScanSpeedRange.value);
+                    slitScanSpeedNumber.value = controlValues.slitScanSpeed.toFixed(4);
+                    slitScanSpeed = controlValues.slitScanSpeed; // Update global
+                });
+                slitScanSpeedNumber.addEventListener('input', () => {
+                    controlValues.slitScanSpeed = parseFloat(slitScanSpeedNumber.value);
+                    // slitScanSpeedRange.value = controlValues.slitScanSpeed; // This might conflict
+                    slitScanSpeed = controlValues.slitScanSpeed; // Update global
+                });
+                // Initialize
+                controlValues.slitScanSpeed = parseFloat(slitScanSpeedRange.value);
+                slitScanSpeedNumber.value = controlValues.slitScanSpeed.toFixed(4);
+                slitScanSpeed = controlValues.slitScanSpeed;
+            }
+
+            // Slice Thickness
+            const sliceThicknessRange = document.getElementById('sliceThicknessRange');
+            const sliceThicknessNumber = document.getElementById('sliceThicknessNumber');
+            if (sliceThicknessRange && sliceThicknessNumber) {
+                sliceThicknessRange.addEventListener('input', () => {
+                    controlValues.sliceThickness = parseFloat(sliceThicknessRange.value);
+                    sliceThicknessNumber.value = controlValues.sliceThickness.toFixed(3);
+                    sliceThickness = controlValues.sliceThickness; // Update global
+                });
+                sliceThicknessNumber.addEventListener('input', () => {
+                    controlValues.sliceThickness = parseFloat(sliceThicknessNumber.value);
+                    sliceThickness = controlValues.sliceThickness; // Update global
+                });
+                controlValues.sliceThickness = parseFloat(sliceThicknessRange.value);
+                sliceThicknessNumber.value = controlValues.sliceThickness.toFixed(3);
+                sliceThickness = controlValues.sliceThickness;
+            }
+
+            // Slice Sample Position
+            const sliceSamplePositionRange = document.getElementById('sliceSamplePositionRange');
+            const sliceSamplePositionNumber = document.getElementById('sliceSamplePositionNumber');
+            if (sliceSamplePositionRange && sliceSamplePositionNumber) {
+                sliceSamplePositionRange.addEventListener('input', () => {
+                    controlValues.sliceSamplePosition = parseFloat(sliceSamplePositionRange.value);
+                    sliceSamplePositionNumber.value = controlValues.sliceSamplePosition.toFixed(2);
+                    sliceSamplePosition = controlValues.sliceSamplePosition; // Update global
+                });
+                sliceSamplePositionNumber.addEventListener('input', () => {
+                    controlValues.sliceSamplePosition = parseFloat(sliceSamplePositionNumber.value);
+                    sliceSamplePosition = controlValues.sliceSamplePosition; // Update global
+                });
+                controlValues.sliceSamplePosition = parseFloat(sliceSamplePositionRange.value);
+                sliceSamplePositionNumber.value = controlValues.sliceSamplePosition.toFixed(2);
+                sliceSamplePosition = controlValues.sliceSamplePosition;
+            }
+
+            // Scan Direction
+            const scanDirectionSelect = document.getElementById('scanDirectionSelect');
+            if (scanDirectionSelect) {
+                scanDirectionSelect.value = scanDirection.toString(); // Initialize from global
+                scanDirectionSelect.addEventListener('change', () => {
+                    scanDirection = parseInt(scanDirectionSelect.value, 10); // Update global
+                    if (currentEffect === 'slitscan' && isSlitScanInitialized && slitScanFBO) {
+                        gl.bindFramebuffer(gl.FRAMEBUFFER, slitScanFBO);
+                        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                        gl.clear(gl.COLOR_BUFFER_BIT);
+                        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                        scanPosition = 0.0;
+                        console.log("Slit Scan cleared due to direction change.");
+                    }
+                });
+            }
+
+            // Reset Slit Scan Button
+            const resetSlitScanButton = document.getElementById('resetSlitScanButton');
+            if (resetSlitScanButton) {
+                resetSlitScanButton.addEventListener('click', () => {
+                    if (currentEffect === 'slitscan' && isSlitScanInitialized && slitScanFBO) {
+                        gl.bindFramebuffer(gl.FRAMEBUFFER, slitScanFBO);
+                        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                        gl.clear(gl.COLOR_BUFFER_BIT);
+                        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                        scanPosition = 0.0;
+                        console.log("Slit Scan accumulation cleared by user.");
+                    } else if (currentEffect === 'slitscan') {
+                        console.warn("Attempted to reset slit scan, but not fully initialized.");
+                    }
+                });
             }
 
             const audioReactiveCheckbox = document.getElementById('audioReactiveCheckbox');
