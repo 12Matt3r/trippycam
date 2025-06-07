@@ -314,6 +314,16 @@
         <label for="resetSlitScanButton" style="flex-basis: auto; margin-right: 10px;">Reset Scan:</label>
         <button id="resetSlitScanButton" class="main-action-button" style="flex-grow: 1;">Clear Accumulation</button>
     </div>
+    <div class="control-group" data-control-key="meltStrength">
+        <label for="meltStrengthRange">Melt Strength:</label>
+        <input type="range" id="meltStrengthRange" min="0.0" max="0.5" step="0.005" value="0.1">
+        <input type="number" id="meltStrengthNumber" step="0.005" value="0.1">
+    </div>
+    <div class="control-group" data-control-key="meltSpread">
+        <label for="meltSpreadRange">Melt Spread:</label>
+        <input type="range" id="meltSpreadRange" min="0.01" max="0.3" step="0.005" value="0.05">
+        <input type="number" id="meltSpreadNumber" step="0.005" value="0.05">
+    </div>
             </div>
             
             <div id="advanced-tab" class="tab-content">
@@ -325,6 +335,10 @@
                 <div class="control-group" style="margin-top: 15px;">
                     <label for="audioReactiveCheckbox" style="flex-basis: auto; margin-right: 10px;">Enable Audio Reactivity (Mic):</label>
                     <input type="checkbox" id="audioReactiveCheckbox" style="width: 20px; height: 20px; flex-shrink: 0;">
+                </div>
+                <div class="control-group" style="margin-top: 15px;">
+                    <label for="faceTrackingCheckbox" style="flex-basis: auto; margin-right: 10px;">Enable Face Tracking (for Face Melt):</label>
+                    <input type="checkbox" id="faceTrackingCheckbox" style="width: 20px; height: 20px; flex-shrink: 0;">
                 </div>
             </div>
         </div>
@@ -1106,6 +1120,88 @@
             gl_FragColor = texture2D(u_webcamTexture, sampleUV);
         }`;
 
+        const faceMeltShaderGLSL = `
+        precision highp float;
+        varying vec2 v_texCoord;
+
+        uniform sampler2D u_webcamTexture;
+        uniform float u_time; // For potential animation, or consistency
+        uniform float u_brightness;
+        uniform float u_contrast;
+        uniform float u_saturation;
+        uniform float u_intensity; // General intensity, can modulate melt parameters
+
+        // Melt Source Points (ensure NUM_MELT_POINTS matches JS const)
+        uniform vec2 u_meltPoint0;
+        uniform vec2 u_meltPoint1;
+        uniform vec2 u_meltPoint2;
+        uniform vec2 u_meltPoint3;
+        uniform vec2 u_meltPoint4;
+
+        uniform float u_meltStrength; // Controls how far the melt "drips"
+        uniform float u_meltSpread;   // Controls horizontal spread of a drip
+
+        // Copied helper functions
+        vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+            vec3 result = color + brightness;
+            result = (result - 0.5) * contrast + 0.5;
+            return clamp(result, 0.0, 1.0);
+        }
+
+        vec3 adjustSaturation(vec3 color, float saturation) {
+            vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+            return mix(gray, color, saturation);
+        }
+
+        // Function to apply melt from a single source point
+        vec3 applyMeltFromPoint(vec3 currentColor, vec2 currentUV, vec2 meltSourcePoint, sampler2D tex) {
+            if (meltSourcePoint.x < 0.0) return currentColor; // Skip if point is off-screen (default)
+
+            float dist_x = abs(currentUV.x - meltSourcePoint.x);
+
+            // Modulated parameters by global intensity
+            float actualMeltSpread = u_meltSpread * (0.5 + u_intensity * 0.5);
+            float actualMeltStrength = u_meltStrength * (0.5 + u_intensity * 1.5); // Intensity has more effect on strength
+
+            if (dist_x < actualMeltSpread && currentUV.y > meltSourcePoint.y) {
+                float horizontal_influence = 1.0 - smoothstep(0.0, actualMeltSpread, dist_x);
+                float vertical_distance_from_point = currentUV.y - meltSourcePoint.y;
+
+                // Melt factor: strong if directly under and close, fades further down and sideways
+                // actualMeltStrength defines the effective "length" of the drip
+                float melt_factor = horizontal_influence * (1.0 - smoothstep(0.0, actualMeltStrength, vertical_distance_from_point));
+
+                if (melt_factor > 0.0) {
+                    // Sample color from the source of the drip (at the meltSourcePoint's y-level, but current fragment's x)
+                    // This creates a "smearing" effect from that source line downwards.
+                    vec4 sourceColor = texture2D(tex, vec2(currentUV.x, meltSourcePoint.y));
+                    return mix(currentColor, sourceColor.rgb, melt_factor);
+                }
+            }
+            return currentColor;
+        }
+
+        void main() {
+            vec2 mirroredUV = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard webcam mirroring
+            vec3 finalColor = texture2D(u_webcamTexture, mirroredUV).rgb;
+
+            // Apply melt from each point
+            // The meltSourcePoints (u_meltPointN) are already in the mirrored UV space from JS
+            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint0, u_webcamTexture);
+            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint1, u_webcamTexture);
+            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint2, u_webcamTexture);
+            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint3, u_webcamTexture);
+            finalColor = applyMeltFromPoint(finalColor, mirroredUV, u_meltPoint4, u_webcamTexture);
+
+            vec4 outputColor = vec4(finalColor, 1.0);
+            outputColor.rgb = adjustSaturation(
+                adjustBrightnessContrast(outputColor.rgb, u_brightness, u_contrast),
+                u_saturation
+            );
+            gl_FragColor = outputColor;
+        }
+    `;
+
         const canvas = document.getElementById('outputCanvas');
         const video = document.getElementById('webcamVideo');
         const errorMessageDiv = document.getElementById('errorMessage');
@@ -1157,6 +1253,8 @@
             slitScanSpeed: 0.005,
             sliceThickness: 0.01,
             sliceSamplePosition: 0.5,
+            meltStrength: 0.1,    // e.g., 0.0 to 0.5 or 1.0
+            meltSpread: 0.05,     // e.g., 0.01 to 0.2
         };
         
         // Default presets for different visual styles
@@ -1182,6 +1280,7 @@
             noiseGlitch: noiseGlitchShader,
             displacementMap: displacementMapShader,
             refraction: refractionShader,
+            facemelt: faceMeltShaderGLSL,
         };
 
         const shaderControlRelevance = {
@@ -1204,6 +1303,7 @@
             'displacementMap': ['displacementMapStrength'],
             'refraction': ['refractionStrength', 'rippleFrequency', 'rippleSpeed'],
             'slitscan': ['slitScanSpeed', 'sliceThickness', 'sliceSamplePosition', 'scanDirection', 'slitScanReset'],
+            'facemelt': ['meltStrength', 'meltSpread'],
         };
 
         let audioContext = null;
@@ -1212,6 +1312,14 @@
         let isAudioSetup = false;
         let audioReactiveEnabled = false; // Will be controlled by a UI element later
         let smoothedVolume = 0.0; // For the calculated audio level
+
+        // Face Tracking Globals
+        let faceLandmarkModel = null;
+        let detectedFaces = [];
+        let isFaceModelReady = false;
+        let faceTrackingEnabled = false;
+        let meltSourcePoints = []; // To store {x, y} of selected landmarks for the shader
+        const NUM_MELT_POINTS = 5; // Define how many points we'll use
 
         const freezeButton = document.getElementById('freezeButton'); const clearFreezeButton = document.getElementById('clearFreezeButton');
         const randomizeButton = document.getElementById('randomizeButton');
@@ -1336,7 +1444,9 @@
                 'u_displacementStrength',
                 'u_refractionStrength',
                 'u_rippleFrequency',
-                'u_rippleSpeed'
+                'u_rippleSpeed',
+                'u_meltPoint0', 'u_meltPoint1', 'u_meltPoint2', 'u_meltPoint3', 'u_meltPoint4',
+                'u_meltStrength', 'u_meltSpread'
             ];
             
             /* @tweakable tolerance for missing uniforms in shaders */
@@ -1351,7 +1461,9 @@
                 'u_displacementStrength',
                 'u_refractionStrength',
                 'u_rippleFrequency',
-                'u_rippleSpeed'
+                'u_rippleSpeed',
+                'u_meltPoint0', 'u_meltPoint1', 'u_meltPoint2', 'u_meltPoint3', 'u_meltPoint4',
+                'u_meltStrength', 'u_meltSpread'
             ]; // Uniforms that are allowed to be missing
             
             let allRequiredOk = true;
@@ -1415,6 +1527,8 @@
             slitScanSpeed: { precision: 4, isInt: false },
             sliceThickness: { precision: 3, isInt: false },
             sliceSamplePosition: { precision: 2, isInt: false },
+            meltStrength: { precision: 3, isInt: false },
+            meltSpread: { precision: 3, isInt: false },
         };
         function updateControlValueFromSlider(controlName, newValue, precision, isInt) {
             const { range, number } = getControlElements(controlName); if (!range || !number) return; let valueToStore = newValue;
@@ -1576,6 +1690,10 @@
                     }
                 }
 
+                // It's important to remember that some uniforms (e.g., u_threshold) are only
+                // utilized by specific shaders. Consequently, their associated UI controls
+                // will not influence the visual output if the currently active shader
+                // does not make use of these particular uniforms.
                 safeUniform1f('u_time', elapsedTime);
                 safeUniform1f('u_motionThreshold', controlValues.motion);
                 safeUniform1f('u_trailPersistence', controlValues.trail);
@@ -1611,6 +1729,21 @@
                 safeUniform1f('u_rippleFrequency', controlValues.rippleFrequency);
                 safeUniform1f('u_rippleSpeed', controlValues.rippleSpeed);
 
+                if (currentEffect === 'facemelt') { // 'facemelt' will be the key for this effect
+                    if (meltSourcePoints && meltSourcePoints.length === NUM_MELT_POINTS) {
+                        for (let i = 0; i < NUM_MELT_POINTS; i++) {
+                            const point = meltSourcePoints[i];
+                            const loc = shaderProgram['u_meltPoint' + i + 'Loc']; // Location should be cached by setupMainShaderAttributesUniforms
+                            if (loc !== null && loc !== undefined && point) {
+                                gl.uniform2f(loc, point.x, point.y);
+                            }
+                        }
+                    }
+                    // meltStrength and meltSpread will be new controlValues
+                    safeUniform1f('u_meltStrength', controlValues.meltStrength || 0.0);
+                    safeUniform1f('u_meltSpread', controlValues.meltSpread || 0.0);
+                }
+
                 // Attribute setup for main shaderProgram should be done once in changeEffect or setupMainShaderAttributesUniforms
                 // For now, assuming pLoc and tLoc are available on shaderProgram or fetched if needed.
                 // Re-using the existing logic which implies they are fetched/set during setupMainShaderAttributesUniforms
@@ -1643,6 +1776,14 @@
                 if (!isFrozen) {
                     let tempFBO = currentSourceFBO; currentSourceFBO = currentDestFBO; currentDestFBO = tempFBO;
                     let tempTex = currentSourceTexture; currentSourceTexture = currentDestTexture; currentDestTexture = tempTex;
+                }
+            }
+
+            if (faceTrackingEnabled && detectedFaces && detectedFaces.length > 0) {
+                // 'canvas' is the global variable for the main output canvas element
+                if (canvas) {
+                    // gl.finish(); // Optional: ensure GL is done. Usually not needed and can hinder performance.
+                    drawFaceLandmarksDebug(canvas, detectedFaces);
                 }
             }
 
@@ -1783,6 +1924,117 @@
                 return false;
             }
         }
+
+    async function detectFaceLandmarksLoop() {
+        if (!isFaceModelReady || !faceLandmarkModel || !faceTrackingEnabled || !mediaReady) {
+            // console.log("Conditions not met for face detection, skipping frame.");
+            // If tracking is enabled but model/media isn't ready, keep trying.
+            if (faceTrackingEnabled) {
+                requestAnimationFrame(detectFaceLandmarksLoop);
+            }
+            return;
+        }
+
+        const videoElement = document.getElementById('webcamVideo'); // Existing video element
+        if (!videoElement || videoElement.readyState < videoElement.HAVE_ENOUGH_DATA) {
+            // console.log("Video element not ready for face detection.");
+            if (faceTrackingEnabled) {
+                requestAnimationFrame(detectFaceLandmarksLoop);
+            }
+            return;
+        }
+
+        try {
+            const estimationConfig = { flipHorizontal: false };
+            // Our webcam feed is displayed mirrored (texCoord.x = 1.0 - texCoord.x).
+            // If the face model expects a non-mirrored image, and our videoElement provides that,
+            // then flipHorizontal: false is correct.
+            // If videoElement itself is mirrored, this might need adjustment.
+            // Let's assume videoElement provides a "natural" view and shaders do the display mirroring.
+            // Most TFJS models expect non-mirrored input.
+
+            const faces = await faceLandmarkModel.estimateFaces(videoElement, estimationConfig);
+            detectedFaces = faces; // Store the latest detections
+
+            if (faces.length > 0 && faces[0].keypoints) {
+                const keypoints = faces[0].keypoints; // Assuming maxFaces = 1 for now
+
+                // Define which landmark indices we want
+                const landmarkIndices = [
+                    175, // Chin
+                    132, // Viewer's Left Jaw/Cheek
+                    213, // Viewer's Left Lower Cheek
+                    361, // Viewer's Right Jaw/Cheek
+                    433  // Viewer's Right Lower Cheek
+                ];
+
+                let newMeltPoints = [];
+                for (let i = 0; i < Math.min(landmarkIndices.length, NUM_MELT_POINTS); i++) {
+                    const index = landmarkIndices[i];
+                    if (keypoints[index]) {
+                        // Landmarks from model are (0-1, 0-1) where X is left-to-right on raw video.
+                        // Shaders usually mirror webcam (1.0 - uv.x). So, flip X for shader.
+                        newMeltPoints.push({
+                            x: 1.0 - keypoints[index].x, // Flip X for shader's mirrored space
+                            y: keypoints[index].y
+                            // z: keypoints[index].z // z is also available if needed later
+                        });
+                    } else {
+                        // Add a default off-screen point if a landmark is missing, to avoid errors
+                        newMeltPoints.push({ x: -1.0, y: -1.0 });
+                    }
+                }
+                // Ensure meltSourcePoints always has NUM_MELT_POINTS, even if fewer are found/defined
+                while (newMeltPoints.length < NUM_MELT_POINTS) {
+                    newMeltPoints.push({ x: -1.0, y: -1.0 }); // Pad with off-screen points
+                }
+                meltSourcePoints = newMeltPoints.slice(0, NUM_MELT_POINTS); // Ensure correct length
+
+            } else {
+                // No faces detected, provide default off-screen points for the shader
+                let defaultPoints = [];
+                for (let i = 0; i < NUM_MELT_POINTS; i++) {
+                    defaultPoints.push({ x: -1.0, y: -1.0 });
+                }
+                meltSourcePoints = defaultPoints;
+            }
+
+        } catch (error) {
+            console.error("Error during face landmark detection:", error);
+            // Potentially stop the loop or show an error to the user if errors persist
+            // For now, just log it and continue trying.
+        }
+
+        // Continue the loop if still enabled
+        if (faceTrackingEnabled) {
+            requestAnimationFrame(detectFaceLandmarksLoop);
+        }
+    }
+
+    function drawFaceLandmarksDebug(canvasElement, faces) { // Changed first param name for clarity
+        if (!canvasElement || !faces || faces.length === 0) return;
+
+        const ctx = canvasElement.getContext('2d');
+        if (!ctx) return;
+
+        ctx.save();
+
+        faces.forEach(face => {
+            if (face.keypoints) {
+                face.keypoints.forEach(keypoint => {
+                    // Flip x-coordinate for drawing on the mirrored canvas
+                    const x = (1.0 - keypoint.x) * canvasElement.width;
+                    const y = keypoint.y * canvasElement.height;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2, 0, 2 * Math.PI); // Draw a small circle (radius 2)
+                    ctx.fillStyle = 'rgba(0, 255, 0, 0.7)'; // Green dots
+                    ctx.fill();
+                });
+            }
+        });
+        ctx.restore();
+    }
 
         // Function to apply a preset
         function applyPreset(presetName) {
@@ -2039,9 +2291,10 @@
                 applyPreset(presetSelector.value);
             });
             
-            // Changing effects will load different shaders.
-            // Thus, some UI controls in the 'Effects' tab (like 'Threshold')
-            // might not be relevant for all selected effects.
+            // When changing effects, different shaders are loaded.
+            // This means that some UI controls in the 'Effects' tab (e.g., 'Threshold')
+            // might not be relevant for all selected effects, as their corresponding
+            // uniforms might not be used by the newly selected shader.
             effectSelector.addEventListener('change', () => {
                 changeEffect(effectSelector.value);
             });
@@ -2193,6 +2446,41 @@
                         }
                     } else {
                         console.log("Audio reactivity disabled.");
+                    }
+                });
+            }
+
+            const faceTrackingCheckbox = document.getElementById('faceTrackingCheckbox');
+
+            if (faceTrackingCheckbox) {
+                // Initialize checkbox state from the global variable (default false)
+                faceTrackingCheckbox.checked = faceTrackingEnabled;
+
+                faceTrackingCheckbox.addEventListener('change', async () => {
+                    const isEnabled = faceTrackingCheckbox.checked;
+                    faceTrackingEnabled = isEnabled; // Update global state
+
+                    if (isEnabled) {
+                        console.log("Face Tracking enabled by user.");
+                        if (!isFaceModelReady) {
+                            showError("Loading face model, please wait...", false); // Inform user
+                            const modelLoaded = await loadFaceLandmarkDetectionModel();
+                            if (modelLoaded) {
+                                // Model is ready, and tracking is enabled, start the loop
+                                requestAnimationFrame(detectFaceLandmarksLoop);
+                            } else {
+                                // Model loading failed, uncheck the box and update enabled status
+                                showError("Face model failed to load. Tracking disabled.", false);
+                                faceTrackingCheckbox.checked = false;
+                                faceTrackingEnabled = false;
+                            }
+                        } else {
+                            // Model was already ready, just ensure the loop starts
+                            requestAnimationFrame(detectFaceLandmarksLoop);
+                        }
+                    } else {
+                        console.log("Face Tracking disabled by user.");
+                        detectedFaces = []; // Clear last detected faces so debug draw stops
                     }
                 });
             }
