@@ -166,6 +166,7 @@
             </div>
             
             <div id="effects-tab" class="tab-content">
+                <span id="currentEffectTitle" class="section-title" style="text-transform: capitalize; margin-bottom: 10px;">Effect Controls</span>
                 <div class="control-group">
                     <label for="effectSelector">Effect:</label>
                     <select id="effectSelector">
@@ -177,38 +178,38 @@
                     </select>
                 </div>
                 
-                <div class="control-group"> <label for="intensityRange">Intensity:</label> <input type="range" id="intensityRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="intensityNumber" step="0.01" value="0.5"> </div>
-                <div class="control-group"> <label for="displacementRange">Displace:</label> <input type="range" id="displacementRange" min="0.0" max="0.1" step="0.001" value="0.01"> <input type="number" id="displacementNumber" step="0.001" value="0.01"> </div>
-                <div class="control-group"> <label for="feedbackRange">Feedback:</label> <input type="range" id="feedbackRange" min="0.0" max="0.95" step="0.01" value="0.2"> <input type="number" id="feedbackNumber" step="0.01" value="0.2"> </div>
-                <div class="control-group"> <label for="thresholdRange">Threshold:</label> <input type="range" id="thresholdRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="thresholdNumber" step="0.01" value="0.5"> </div>
+                <div class="control-group" data-control-key="intensity"> <label for="intensityRange">Intensity:</label> <input type="range" id="intensityRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="intensityNumber" step="0.01" value="0.5"> </div>
+                <div class="control-group" data-control-key="displacement"> <label for="displacementRange">Displace:</label> <input type="range" id="displacementRange" min="0.0" max="0.1" step="0.001" value="0.01"> <input type="number" id="displacementNumber" step="0.001" value="0.01"> </div>
+                <div class="control-group" data-control-key="feedback"> <label for="feedbackRange">Feedback:</label> <input type="range" id="feedbackRange" min="0.0" max="0.95" step="0.01" value="0.2"> <input type="number" id="feedbackNumber" step="0.01" value="0.2"> </div>
+                <div class="control-group" data-control-key="threshold"> <label for="thresholdRange">Threshold:</label> <input type="range" id="thresholdRange" min="0.0" max="1.0" step="0.01" value="0.5"> <input type="number" id="thresholdNumber" step="0.01" value="0.5"> </div>
 
                 <div class="section-title" style="margin-top: 15px;">CRT Effect Controls:</div>
-                <div class="control-group">
+                <div class="control-group" data-control-key="scanlineIntensity">
                     <label for="scanlineIntensityRange">Scanline Str:</label>
                     <input type="range" id="scanlineIntensityRange" min="0.0" max="1.0" step="0.01" value="0.3">
                     <input type="number" id="scanlineIntensityNumber" step="0.01" value="0.3">
                 </div>
-                <div class="control-group">
+                <div class="control-group" data-control-key="scanlineDensity">
                     <label for="scanlineDensityRange">Scanline Den:</label>
                     <input type="range" id="scanlineDensityRange" min="100.0" max="1200.0" step="10" value="600.0">
                     <input type="number" id="scanlineDensityNumber" step="10" value="600.0">
                 </div>
-                <div class="control-group">
+                <div class="control-group" data-control-key="curvatureAmount">
                     <label for="curvatureAmountRange">Curvature:</label>
                     <input type="range" id="curvatureAmountRange" min="0.0" max="0.5" step="0.005" value="0.1">
                     <input type="number" id="curvatureAmountNumber" step="0.005" value="0.1">
                 </div>
-                <div class="control-group">
+                <div class="control-group" data-control-key="phosphorOffset">
                     <label for="phosphorOffsetRange">Phosphor:</label>
                     <input type="range" id="phosphorOffsetRange" min="0.0" max="0.02" step="0.0005" value="0.003">
                     <input type="number" id="phosphorOffsetNumber" step="0.0005" value="0.003">
                 </div>
-                <div class="control-group">
+                <div class="control-group" data-control-key="vignetteStrength">
                     <label for="vignetteStrengthRange">Vignette Str:</label>
                     <input type="range" id="vignetteStrengthRange" min="0.0" max="1.0" step="0.01" value="0.2">
                     <input type="number" id="vignetteStrengthNumber" step="0.01" value="0.2">
                 </div>
-                <div class="control-group">
+                <div class="control-group" data-control-key="vignetteSoftness">
                     <label for="vignetteSoftnessRange">Vignette Soft:</label>
                     <input type="range" id="vignetteSoftnessRange" min="0.0" max="2.0" step="0.01" value="0.5">
                     <input type="number" id="vignetteSoftnessNumber" step="0.01" value="0.5">
@@ -690,6 +691,21 @@
             colorshift: colorShiftShader,
             crt: crtShader
         };
+
+        const shaderControlRelevance = {
+            'datamosh': ['intensity', 'displacement', 'feedback'],
+            'pixelsort': ['intensity', 'displacement', 'feedback', 'threshold'],
+            'feedback': ['intensity', 'displacement', 'feedback', 'threshold'],
+            'colorshift': ['intensity', 'displacement', 'feedback', 'threshold'],
+            'crt': [
+                'scanlineIntensity',
+                'scanlineDensity',
+                'curvatureAmount',
+                'phosphorOffset',
+                'vignetteStrength',
+                'vignetteSoftness'
+            ]
+        };
         
         const freezeButton = document.getElementById('freezeButton'); const clearFreezeButton = document.getElementById('clearFreezeButton');
         const randomizeButton = document.getElementById('randomizeButton');
@@ -992,6 +1008,27 @@
             
             currentEffect = effectName;
             console.log(`Changed effect to: ${effectName}`);
+
+            // Update visible controls based on the new effect's relevance
+            const effectsTab = document.getElementById('effects-tab');
+            if (effectsTab) {
+                const allEffectControls = effectsTab.querySelectorAll('div.control-group[data-control-key]');
+                const relevantKeys = shaderControlRelevance[effectName] || [];
+
+                allEffectControls.forEach(controlDiv => {
+                    const controlKey = controlDiv.dataset.controlKey;
+                    if (relevantKeys.includes(controlKey)) {
+                        controlDiv.style.display = ''; // Revert to CSS default (flex)
+                    } else {
+                        controlDiv.style.display = 'none';
+                    }
+                });
+            }
+
+            const effectTitleElement = document.getElementById('currentEffectTitle');
+            if (effectTitleElement) {
+                effectTitleElement.textContent = effectName ? `${effectName} Controls` : 'Effect Controls';
+            }
         }
         
         async function setupMediaSource(sourceType, sourceDetail = {}) {
@@ -1185,6 +1222,11 @@
             }
             
             await setupMediaSource('webcam', { facingMode: currentFacingMode });
+
+            // Ensure initial UI state for controls is set based on the default effect
+            if (effectSelector) {
+                changeEffect(effectSelector.value);
+            }
         }
         
         // Update the randomization function
