@@ -222,6 +222,10 @@
                 <div class="control-group"> <label for="brightnessRange">Brightness:</label> <input type="range" id="brightnessRange" min="-0.5" max="0.5" step="0.01" value="0.0"> <input type="number" id="brightnessNumber" step="0.01" value="0.0"> </div>
                 <div class="control-group"> <label for="contrastRange">Contrast:</label> <input type="range" id="contrastRange" min="0.5" max="2.0" step="0.01" value="1.0"> <input type="number" id="contrastNumber" step="0.01" value="1.0"> </div>
                 <div class="control-group"> <label for="saturationRange">Saturation:</label> <input type="range" id="saturationRange" min="0.0" max="2.0" step="0.01" value="1.0"> <input type="number" id="saturationNumber" step="0.01" value="1.0"> </div>
+                <div class="control-group" style="margin-top: 15px;">
+                    <label for="audioReactiveCheckbox" style="flex-basis: auto; margin-right: 10px;">Enable Audio Reactivity (Mic):</label>
+                    <input type="checkbox" id="audioReactiveCheckbox" style="width: 20px; height: 20px; flex-shrink: 0;">
+                </div>
             </div>
         </div>
         <div id="resizeHandle"></div>
@@ -707,6 +711,13 @@
             ]
         };
         
+        let audioContext = null;
+        let analyserNode = null;
+        let audioDataArray = null;
+        let isAudioSetup = false;
+        let audioReactiveEnabled = false; // Will be controlled by a UI element later
+        let smoothedVolume = 0.0; // For the calculated audio level
+
         const freezeButton = document.getElementById('freezeButton'); const clearFreezeButton = document.getElementById('clearFreezeButton');
         const randomizeButton = document.getElementById('randomizeButton');
         const controlsPanel = document.getElementById('controls'); const controlsContent = document.getElementById('controlsContent');
@@ -890,7 +901,16 @@
             safeUniform1f('u_trailPersistence', controlValues.trail);
             safeUniform1f('u_hueShiftSpeed', controlValues.hue);
             safeUniform1f('u_motionExtrapolation', controlValues.extrap);
-            safeUniform1f('u_intensity', controlValues.intensity);
+
+            let currentIntensity = controlValues.intensity;
+            if (audioReactiveEnabled && isAudioSetup) { // Only apply if enabled AND audio is actually setup
+                // Combine user intensity with smoothed audio volume.
+                // Audio can boost intensity. Max combined intensity is clamped to 1.0.
+                // The 0.75 is an amplification factor for audio's impact, can be tweaked.
+                currentIntensity = Math.min(1.0, controlValues.intensity + smoothedVolume * 0.75);
+            }
+            safeUniform1f('u_intensity', currentIntensity);
+
             safeUniform1f('u_displacement', controlValues.displacement);
             safeUniform1f('u_feedback', controlValues.feedback);
             safeUniform1f('u_threshold', controlValues.threshold);
@@ -969,6 +989,89 @@
             }
         }
         
+        function processAudioFrame() {
+            if (!isAudioSetup || !analyserNode || !audioDataArray) {
+                // console.warn("Audio not ready for processing.");
+                // requestAnimationFrame(processAudioFrame); // Keep trying or stop if not setup?
+                return; // Stop if not setup, setupAudio will restart it if/when ready
+            }
+
+            if (!audioReactiveEnabled) {
+                smoothedVolume = 0.0; // Reset volume if reactivity is turned off
+                // No need to request another frame if disabled, the enable action will restart it.
+                return;
+            }
+
+            // Get audio data
+            // Using byte frequency data for simplicity in RMS calculation here
+            analyserNode.getByteFrequencyData(audioDataArray);
+            // Or, if using time domain: analyserNode.getFloatTimeDomainData(audioDataArray);
+
+            let sumOfSquares = 0;
+            for (let i = 0; i < audioDataArray.length; i++) {
+                // For frequency data, values are 0-255. Normalize to 0-1.
+                const normalizedValue = audioDataArray[i] / 255.0;
+                sumOfSquares += normalizedValue * normalizedValue;
+            }
+            const rms = Math.sqrt(sumOfSquares / audioDataArray.length);
+
+            // Apply smoothing (Exponential Moving Average)
+            // Adjust smoothingFactor: lower means more smoothing, higher means more responsive.
+            const smoothingFactor = 0.1;
+            smoothedVolume = rms * smoothingFactor + smoothedVolume * (1.0 - smoothingFactor);
+
+            // Clamping smoothedVolume to be safe, though RMS of normalized values should be <= 1
+            smoothedVolume = Math.min(1.0, Math.max(0.0, smoothedVolume));
+
+            // For debugging:
+            // console.log("Smoothed Volume:", smoothedVolume);
+
+            // Keep the loop going if audio reactivity is enabled
+            if (audioReactiveEnabled) {
+                requestAnimationFrame(processAudioFrame);
+            }
+        }
+
+        async function setupAudio() {
+            if (isAudioSetup) return true; // Already setup
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showError("Audio Reactivity Error: getUserMedia not supported.", false);
+                return false;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                const source = audioContext.createMediaStreamSource(stream);
+                analyserNode = audioContext.createAnalyser();
+                analyserNode.fftSize = 256; // Or 512. Smaller is faster, less detailed.
+                // analyserNode.smoothingTimeConstant = 0.8; // Optional smoothing on analyser itself
+
+                source.connect(analyserNode);
+                // Do not connect analyserNode to destination, we only need to analyze.
+
+                audioDataArray = new Uint8Array(analyserNode.frequencyBinCount); // For frequency data
+                // OR use Float32Array for time domain data if preferred for RMS volume calculation
+                // audioDataArray = new Float32Array(analyserNode.fftSize);
+
+
+                isAudioSetup = true;
+                console.log("Audio setup complete.");
+
+                // Start the audio processing loop.
+                // processAudioFrame will check audioReactiveEnabled internally.
+                requestAnimationFrame(processAudioFrame);
+                return true;
+
+            } catch (err) {
+                showError(`Audio Reactivity Error: ${err.name} - ${err.message}. Check microphone permissions.`, false);
+                isAudioSetup = false;
+                return false;
+            }
+        }
+
         // Function to apply a preset
         function applyPreset(presetName) {
             if (!presets[presetName]) return;
@@ -1226,6 +1329,29 @@
             // Ensure initial UI state for controls is set based on the default effect
             if (effectSelector) {
                 changeEffect(effectSelector.value);
+            }
+
+            const audioReactiveCheckbox = document.getElementById('audioReactiveCheckbox');
+            if (audioReactiveCheckbox) {
+                audioReactiveCheckbox.checked = audioReactiveEnabled;
+
+                audioReactiveCheckbox.addEventListener('change', async () => {
+                    audioReactiveEnabled = audioReactiveCheckbox.checked;
+                    if (audioReactiveEnabled) {
+                        if (!isAudioSetup) {
+                            const audioReady = await setupAudio();
+                            if (!audioReady) {
+                                audioReactiveCheckbox.checked = false;
+                                audioReactiveEnabled = false;
+                                showError("Failed to initialize audio. Reactivity disabled.", false);
+                            }
+                        } else {
+                            requestAnimationFrame(processAudioFrame);
+                        }
+                    } else {
+                        console.log("Audio reactivity disabled.");
+                    }
+                });
             }
         }
         
