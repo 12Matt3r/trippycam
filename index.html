@@ -731,6 +731,11 @@
                 }
             }
             
+            <!--
+                Some uniforms (e.g., u_threshold) are only used by specific shaders.
+                Their corresponding UI controls in the 'Effects' tab won't affect visuals
+                if a shader that doesn't use them is currently active.
+            -->
             // Set all uniforms safely
             safeUniform1f('u_time', elapsedTime);
             safeUniform1f('u_motionThreshold', controlValues.motion);
@@ -999,6 +1004,11 @@
                 applyPreset(presetSelector.value);
             });
             
+            <!--
+                Changing effects will load different shaders.
+                Thus, some UI controls in the 'Effects' tab (like 'Threshold')
+                might not be relevant for all selected effects.
+            -->
             effectSelector.addEventListener('change', () => {
                 changeEffect(effectSelector.value);
             });
