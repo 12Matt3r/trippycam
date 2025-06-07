@@ -175,6 +175,9 @@
                         <option value="feedback">Feedback</option>
                         <option value="colorshift">Color Shift</option>
                         <option value="crt">CRT Effect</option>
+                        <option value="mirror">Horizontal Mirror</option>
+                        <option value="wavewarp">Wave Warp</option>
+                        <option value="kaleidoscope">Kaleidoscope</option>
                     </select>
                 </div>
                 
@@ -213,6 +216,30 @@
                     <label for="vignetteSoftnessRange">Vignette Soft:</label>
                     <input type="range" id="vignetteSoftnessRange" min="0.0" max="2.0" step="0.01" value="0.5">
                     <input type="number" id="vignetteSoftnessNumber" step="0.01" value="0.5">
+                </div>
+
+                <div class="section-title" style="margin-top: 15px;">Wave Warp Controls:</div>
+                <div class="control-group" data-control-key="waveDensity">
+                    <label for="waveDensityRange">Wave Density:</label>
+                    <input type="range" id="waveDensityRange" min="5.0" max="100.0" step="1" value="20.0">
+                    <input type="number" id="waveDensityNumber" step="1" value="20.0">
+                </div>
+                <div class="control-group" data-control-key="waveSpeed">
+                    <label for="waveSpeedRange">Wave Speed:</label>
+                    <input type="range" id="waveSpeedRange" min="0.0" max="10.0" step="0.1" value="1.0">
+                    <input type="number" id="waveSpeedNumber" step="0.1" value="1.0">
+                </div>
+                <div class="control-group" data-control-key="waveAmplitude">
+                    <label for="waveAmplitudeRange">Wave Amp:</label>
+                    <input type="range" id="waveAmplitudeRange" min="0.0" max="0.15" step="0.001" value="0.02">
+                    <input type="number" id="waveAmplitudeNumber" step="0.001" value="0.02">
+                </div>
+
+                <div class="section-title" style="margin-top: 15px;">Kaleidoscope Controls:</div>
+                <div class="control-group" data-control-key="kaleidoSegments">
+                    <label for="kaleidoSegmentsRange">Segments:</label>
+                    <input type="range" id="kaleidoSegmentsRange" min="2" max="20" step="1" value="6">
+                    <input type="number" id="kaleidoSegmentsNumber" min="2" max="20" step="1" value="6">
                 </div>
             </div>
             
@@ -643,6 +670,97 @@
                 finalColor = clamp(finalColor, 0.0, 1.0);
                 gl_FragColor = vec4(finalColor, 1.0);
             }`;
+
+        /* @tweakable simple horizontal mirror shader */
+        const mirrorShader = `
+            precision highp float;
+            varying vec2 v_texCoord;
+            uniform sampler2D u_webcamTexture;
+            uniform float u_time;
+            uniform float u_brightness;
+            uniform float u_contrast;
+            uniform float u_saturation;
+            uniform float u_intensity; // For consistency
+
+            // Copied helper functions
+            vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+                vec3 result = color + brightness;
+                result = (result - 0.5) * contrast + 0.5;
+                return clamp(result, 0.0, 1.0);
+            }
+
+            vec3 adjustSaturation(vec3 color, float saturation) {
+                vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+                return mix(gray, color, saturation);
+            }
+
+            void main() {
+                // Most shaders use 'vec2 mirroredTexCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y);'
+                // to sample u_webcamTexture because the webcam feed itself might be naturally unmirrored.
+                // This 'mirrorShader' aims to display the *actual* non-mirrored webcam feed.
+                // Thus, we sample u_webcamTexture with the *original* v_texCoord.x.
+                // If u_webcamTexture is already mirrored (as is the case by default in this app's webcam setup),
+                // then sampling with v_texCoord.x effectively "un-mirrors" it.
+                vec4 finalColor = texture2D(u_webcamTexture, vec2(v_texCoord.x, v_texCoord.y));
+
+                finalColor.rgb = adjustSaturation(
+                    adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
+                    u_saturation
+                );
+
+                gl_FragColor = finalColor;
+            }`;
+
+        const waveWarpShader = `
+            precision highp float;
+            varying vec2 v_texCoord;
+            uniform sampler2D u_webcamTexture;
+            uniform float u_time;
+            uniform float u_brightness;
+            uniform float u_contrast;
+            uniform float u_saturation;
+            uniform float u_intensity; // General intensity, can modulate wave amplitude
+
+            uniform float u_waveDensity;  // e.g., 10.0 to 50.0
+            uniform float u_waveSpeed;    // e.g., 0.5 to 5.0
+            uniform float u_waveAmplitude; // e.g., 0.01 to 0.1
+
+            // Copied helper functions
+            vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+                vec3 result = color + brightness;
+                result = (result - 0.5) * contrast + 0.5;
+                return clamp(result, 0.0, 1.0);
+            }
+
+            vec3 adjustSaturation(vec3 color, float saturation) {
+                vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+                return mix(gray, color, saturation);
+            }
+
+            void main() {
+                vec2 texCoord = v_texCoord;
+                // Other effects already mirror webcam input, so we do too for consistency.
+                texCoord.x = 1.0 - texCoord.x;
+
+                float modulatedAmplitude = u_waveAmplitude * (0.5 + u_intensity * 0.5); // Let global intensity affect wave strength
+
+                texCoord.y += sin(texCoord.x * u_waveDensity + u_time * u_waveSpeed) * modulatedAmplitude;
+                // Optional: texCoord.x += cos(texCoord.y * u_waveDensity * 0.7 + u_time * u_waveSpeed * 0.7) * modulatedAmplitude * 0.5; // Second wave for X
+
+                vec4 finalColor;
+                // Prevent sampling outside texture bounds if waves are too strong
+                if (texCoord.y < 0.0 || texCoord.y > 1.0 || texCoord.x < 0.0 || texCoord.x > 1.0) {
+                    finalColor = vec4(0.0, 0.0, 0.0, 1.0); // Black if out of bounds
+                } else {
+                    finalColor = texture2D(u_webcamTexture, texCoord);
+                }
+
+                finalColor.rgb = adjustSaturation(
+                    adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast),
+                    u_saturation
+                );
+                gl_FragColor = finalColor;
+            }`;
         
         const fsPassthroughSource = ` precision mediump float; varying vec2 v_texCoord; uniform sampler2D u_textureToDraw; void main() { gl_FragColor = texture2D(u_textureToDraw, v_texCoord); } `;
         const canvas = document.getElementById('outputCanvas');
@@ -674,7 +792,10 @@
             curvatureAmount: 0.1,
             phosphorOffset: 0.003,
             vignetteStrength: 0.2,
-            vignetteSoftness: 0.5
+            vignetteSoftness: 0.5,
+            waveDensity: 20.0,
+            waveSpeed: 1.0,
+            waveAmplitude: 0.02
         };
         
         // Default presets for different visual styles
@@ -693,7 +814,9 @@
             pixelsort: pixelSortShader,
             feedback: feedbackShader,
             colorshift: colorShiftShader,
-            crt: crtShader
+            crt: crtShader,
+            mirror: mirrorShader,
+            wavewarp: waveWarpShader
         };
 
         const shaderControlRelevance = {
@@ -708,7 +831,9 @@
                 'phosphorOffset',
                 'vignetteStrength',
                 'vignetteSoftness'
-            ]
+            ],
+            'mirror': [],
+            'wavewarp': ['waveDensity', 'waveSpeed', 'waveAmplitude']
         };
         
         let audioContext = null;
@@ -793,14 +918,16 @@
                 'u_trailPersistence', 'u_hueShiftSpeed', 'u_motionExtrapolation', 'u_intensity',
                 'u_displacement', 'u_feedback', 'u_threshold', 'u_brightness', 'u_contrast', 'u_saturation',
                 'u_scanlineIntensity', 'u_scanlineDensity', 'u_curvatureAmount', 'u_phosphorOffset',
-                'u_vignetteStrength', 'u_vignetteSoftness' // New uniforms added here
+                'u_vignetteStrength', 'u_vignetteSoftness',
+                'u_waveDensity', 'u_waveSpeed', 'u_waveAmplitude' // Wave warp uniforms
             ];
             
             /* @tweakable tolerance for missing uniforms in shaders */
             const optionalUniforms = [
                 'u_threshold',
                 'u_scanlineIntensity', 'u_scanlineDensity', 'u_curvatureAmount', 'u_phosphorOffset',
-                'u_vignetteStrength', 'u_vignetteSoftness'
+                'u_vignetteStrength', 'u_vignetteSoftness',
+                'u_waveDensity', 'u_waveSpeed', 'u_waveAmplitude' // Wave warp uniforms
             ]; // Uniforms that are allowed to be missing
             
             let allRequiredOk = true;
@@ -851,7 +978,10 @@
             curvatureAmount: { precision: 3, isInt: false },
             phosphorOffset: { precision: 4, isInt: false },
             vignetteStrength: { precision: 2, isInt: false },
-            vignetteSoftness: { precision: 2, isInt: false }
+            vignetteSoftness: { precision: 2, isInt: false },
+            waveDensity: { precision: 1, isInt: false },
+            waveSpeed: { precision: 2, isInt: false },
+            waveAmplitude: { precision: 3, isInt: false }
         };
         function updateControlValueFromSlider(controlName, newValue, precision, isInt) {
             const { range, number } = getControlElements(controlName); if (!range || !number) return; let valueToStore = newValue;
@@ -925,6 +1055,11 @@
             safeUniform1f('u_phosphorOffset', controlValues.phosphorOffset);
             safeUniform1f('u_vignetteStrength', controlValues.vignetteStrength);
             safeUniform1f('u_vignetteSoftness', controlValues.vignetteSoftness);
+
+            // Wave Warp Uniforms
+            safeUniform1f('u_waveDensity', controlValues.waveDensity);
+            safeUniform1f('u_waveSpeed', controlValues.waveSpeed);
+            safeUniform1f('u_waveAmplitude', controlValues.waveAmplitude);
 
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             
