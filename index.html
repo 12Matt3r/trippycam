@@ -772,37 +772,6 @@ void main() {
     gl_FragColor = finalColor;
 }`;
 
-const fisheyeShaderGLSL = `
-precision highp float; varying vec2 v_texCoord;
-uniform sampler2D u_webcamTexture; uniform float u_time;
-uniform float u_brightness; uniform float u_contrast; uniform float u_saturation; uniform float u_intensity;
-uniform float u_fisheyeStrength;
-
-vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
-    vec3 result = color + brightness;
-    result = (result - 0.5) * contrast + 0.5;
-    return clamp(result, 0.0, 1.0);
-}
-vec3 adjustSaturation(vec3 color, float saturation) {
-    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
-    return mix(gray, color, saturation);
-}
-
-void main() {
-    vec2 texCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
-    vec2 uv_centered = texCoord * 2.0 - 1.0;
-    float d = length(uv_centered);
-    if (d != 0.0) { // Avoid division by zero at center
-        uv_centered = uv_centered / (1.0 + u_fisheyeStrength * d);
-    }
-    vec2 finalUV = (uv_centered + 1.0) / 2.0;
-    vec4 finalColor;
-    if (finalUV.x < 0.0 || finalUV.x > 1.0 || finalUV.y < 0.0 || finalUV.y > 1.0) { finalColor = vec4(0.0,0.0,0.0,1.0); }
-    else { finalColor = texture2D(u_webcamTexture, finalUV); }
-    finalColor.rgb = adjustSaturation(adjustBrightnessContrast(finalColor.rgb, u_brightness, u_contrast), u_saturation);
-    gl_FragColor = finalColor;
-}`;
-
 const noiseGlitchShaderGLSL = `
 precision highp float; varying vec2 v_texCoord;
 uniform sampler2D u_webcamTexture; uniform float u_time;
