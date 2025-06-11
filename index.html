@@ -277,6 +277,10 @@
                     <label for="audioReactiveCheckbox" style="flex-basis: auto; margin-right: 10px;">Enable Audio Reactivity (Mic):</label>
                     <input type="checkbox" id="audioReactiveCheckbox" style="width: 20px; height: 20px; flex-shrink: 0;">
                 </div>
+                <div class="control-group" style="margin-top: 15px; align-items: center;">
+                    <label for="faceTrackingCheckbox" style="flex-basis: auto; margin-right: 10px;">Enable Face Tracking:</label>
+                    <input type="checkbox" id="faceTrackingCheckbox" style="width: 20px; height: 20px; flex-shrink: 0;">
+                </div>
             </div>
         </div>
         <div id="resizeHandle"></div>
@@ -1450,6 +1454,10 @@ void main() {
                     video.onloadedmetadata = () => {
                         if (video.videoWidth === 0 || video.videoHeight === 0) { showError("Webcam video dimensions zero.", true); return; }
                         canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+                        if (overlayCanvas) {
+                            overlayCanvas.width = canvas.width;
+                            overlayCanvas.height = canvas.height;
+                        }
                         if (!initFramebuffersAndTextures(canvas.width, canvas.height)) { showError("FBO/History Init Failed for webcam.", true); return; }
                         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
                         video.play().then(() => { mediaReady = true; startTime = performance.now(); if (renderLoopId === null) { frameCount = 0; renderLoopId = requestAnimationFrame(renderLoop); } useWebcamButton.style.display = 'none'; fileUploadInput.value = null;
@@ -1469,6 +1477,10 @@ void main() {
                     uploadedMediaElement.onload = () => {
                         if (uploadedMediaElement.naturalWidth === 0 || uploadedMediaElement.naturalHeight === 0) { showError("Uploaded image has zero dimensions.", false); URL.revokeObjectURL(objectURL); return; }
                         canvas.width = uploadedMediaElement.naturalWidth; canvas.height = uploadedMediaElement.naturalHeight;
+                        if (overlayCanvas) {
+                            overlayCanvas.width = canvas.width;
+                            overlayCanvas.height = canvas.height;
+                        }
                         if (!initFramebuffersAndTextures(canvas.width, canvas.height)) { showError("FBO init failed for uploaded image.", true); URL.revokeObjectURL(objectURL); return; }
                         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight); mediaReady = true; startTime = performance.now();
                         if (renderLoopId === null) { renderLoopId = requestAnimationFrame(renderLoop); } useWebcamButton.style.display = 'block';
@@ -1481,6 +1493,10 @@ void main() {
                     uploadedMediaElement.onloadedmetadata = () => {
                         if (uploadedMediaElement.videoWidth === 0 || uploadedMediaElement.videoHeight === 0) { showError("Uploaded video has zero dimensions.", false); URL.revokeObjectURL(objectURL); return; }
                         canvas.width = uploadedMediaElement.videoWidth; canvas.height = uploadedMediaElement.videoHeight;
+                        if (overlayCanvas) {
+                            overlayCanvas.width = canvas.width;
+                            overlayCanvas.height = canvas.height;
+                        }
                         if (!initFramebuffersAndTextures(canvas.width, canvas.height)) { showError("FBO init failed for uploaded video.", true); URL.revokeObjectURL(objectURL); return; }
                         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
                         uploadedMediaElement.play().then(() => { mediaReady = true; startTime = performance.now(); if (renderLoopId === null) { frameCount = 0; renderLoopId = requestAnimationFrame(renderLoop); } useWebcamButton.style.display = 'block';
@@ -1540,6 +1556,15 @@ void main() {
         async function main() {
             if (!errorMessageDiv) { return; }
             if (!initWebGL() || !initBuffers()) { showError("WebGL/Buffer Init Failed.", true); return; }
+
+            overlayCanvas = document.createElement('canvas');
+            document.body.appendChild(overlayCanvas);
+            overlayCanvas.style.position = 'absolute';
+            overlayCanvas.style.top = '0';
+            overlayCanvas.style.left = '0';
+            overlayCanvas.style.pointerEvents = 'none';
+            overlayCanvas.style.zIndex = '990';
+            overlayCtx = overlayCanvas.getContext('2d');
             
             // Initialize with the datamosh shader by default
             shaderProgram = createShaderProgram(vsSource, datamoshShader);
@@ -1646,6 +1671,34 @@ void main() {
 
             if (effectSelector) { // Ensure effectSelector is available
                 changeEffect(effectSelector.value); // Set initial UI state for controls
+            }
+
+            const faceTrackingCheckbox = document.getElementById('faceTrackingCheckbox');
+            if (faceTrackingCheckbox) {
+                faceTrackingCheckbox.checked = isFaceTrackingEnabled;
+                faceTrackingCheckbox.addEventListener('change', async () => {
+                    isFaceTrackingEnabled = faceTrackingCheckbox.checked;
+                    if (isFaceTrackingEnabled) {
+                        if (typeof faceapi === 'undefined') {
+                            showError("Face-api.js not loaded yet.", false);
+                            isFaceTrackingEnabled = false;
+                            faceTrackingCheckbox.checked = false;
+                            return;
+                        }
+                        if (!faceTrackingModelsLoaded) {
+                            const modelsNowLoaded = await loadFaceTrackingModels();
+                            if (!modelsNowLoaded) {
+                                isFaceTrackingEnabled = false; // Disable if models failed to load
+                                faceTrackingCheckbox.checked = false;
+                                return;
+                            }
+                        }
+                        requestAnimationFrame(detectFace); // Start detection loop
+                    } else {
+                        if (overlayCtx) overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+                        lastDetections = []; // Clear stored detections
+                    }
+                });
             }
         }
         
