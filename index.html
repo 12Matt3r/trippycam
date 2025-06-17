@@ -181,6 +181,7 @@
                         <option value="noiseGlitch">Noise Glitch</option>
                         <option value="fisheye">Fisheye Distortion</option>
                         <option value="feedbackDisplace">Feedback Displace</option>
+                        <option value="invertColors">Invert Colors</option>
                     </select>
                 </div>
                 
@@ -942,6 +943,40 @@ void main() {
     gl_FragColor = finalColor;
 }`;
 
+const invertColorsShaderGLSL = `
+precision highp float;
+varying vec2 v_texCoord;
+uniform sampler2D u_webcamTexture;
+uniform float u_brightness;
+uniform float u_contrast;
+uniform float u_saturation;
+// uniform float u_intensity; // Not used by simple invert but good to keep for consistency
+
+vec3 adjustBrightnessContrast(vec3 color, float brightness, float contrast) {
+    vec3 result = color + brightness;
+    result = (result - 0.5) * contrast + 0.5;
+    return clamp(result, 0.0, 1.0);
+}
+
+vec3 adjustSaturation(vec3 color, float saturation) {
+    vec3 gray = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
+    return mix(gray, color, saturation);
+}
+
+void main() {
+    vec2 mirroredTexCoord = vec2(1.0 - v_texCoord.x, v_texCoord.y); // Standard mirror
+    vec4 originalColor = texture2D(u_webcamTexture, mirroredTexCoord);
+
+    vec3 invertedColor = vec3(1.0 - originalColor.r, 1.0 - originalColor.g, 1.0 - originalColor.b);
+
+    invertedColor = adjustSaturation(
+        adjustBrightnessContrast(invertedColor, u_brightness, u_contrast),
+        u_saturation
+    );
+
+    gl_FragColor = vec4(invertedColor, originalColor.a);
+}`;
+
         const fsPassthroughSource = ` precision mediump float; varying vec2 v_texCoord; uniform sampler2D u_textureToDraw; void main() { gl_FragColor = texture2D(u_textureToDraw, v_texCoord); } `;
         const canvas = document.getElementById('outputCanvas');
         const video = document.getElementById('webcamVideo');
@@ -1004,7 +1039,8 @@ void main() {
             kaleidoscope: kaleidoscopeShaderGLSL,
             noiseGlitch: noiseGlitchShaderGLSL,
             fisheye: fisheyeShaderGLSL,
-            feedbackDisplace: feedbackDisplaceShaderGLSL
+            feedbackDisplace: feedbackDisplaceShaderGLSL,
+            invertColors: invertColorsShaderGLSL,
         };
 
         const shaderControlRelevance = {
@@ -1018,7 +1054,8 @@ void main() {
             'kaleidoscope': ['kaleidoSegments'],
             'fisheye': ['fisheyeStrength'],
             'noiseGlitch': ['glitchStrength'],
-            'feedbackDisplace': ['displacementMapStrength', 'intensity']
+            'feedbackDisplace': ['displacementMapStrength', 'intensity'],
+            'invertColors': [],
         };
 
         let audioContext = null;
